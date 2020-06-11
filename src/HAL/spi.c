@@ -27,8 +27,8 @@ void SPI1Init() {
 	LL_GPIO_SetPinSpeed(GPIOB, LL_GPIO_PIN_5, LL_GPIO_SPEED_FREQ_HIGH);
 	LL_GPIO_SetPinOutputType(GPIOB, LL_GPIO_PIN_5, LL_GPIO_OUTPUT_PUSHPULL);
 
-	//Configure SPI Interface
-	LL_SPI_SetBaudRatePrescaler(SPI1, LL_SPI_BAUDRATEPRESCALER_DIV128);
+	//Configure SPI Interface in Full-Duplex Master Mode 0
+	LL_SPI_SetBaudRatePrescaler(SPI1, LL_SPI_BAUDRATEPRESCALER_DIV32);
 	LL_SPI_SetTransferDirection(SPI1,LL_SPI_FULL_DUPLEX);
 	LL_SPI_SetClockPhase(SPI1, LL_SPI_PHASE_1EDGE);
 	LL_SPI_SetClockPolarity(SPI1, LL_SPI_POLARITY_LOW);
@@ -70,8 +70,8 @@ void SPI2Init() {
 	LL_GPIO_SetPinSpeed(GPIOB, LL_GPIO_PIN_15, LL_GPIO_SPEED_FREQ_HIGH);
 	LL_GPIO_SetPinOutputType(GPIOB, LL_GPIO_PIN_15, LL_GPIO_OUTPUT_PUSHPULL);
 
-	//Configure SPI Interface
-	LL_SPI_SetBaudRatePrescaler(SPI2, LL_SPI_BAUDRATEPRESCALER_DIV128);
+	//Configure SPI Interface in Full-Duplex Master Mode 0
+	LL_SPI_SetBaudRatePrescaler(SPI2, LL_SPI_BAUDRATEPRESCALER_DIV32);
 	LL_SPI_SetTransferDirection(SPI2,LL_SPI_FULL_DUPLEX);
 	LL_SPI_SetClockPhase(SPI2, LL_SPI_PHASE_1EDGE);
 	LL_SPI_SetClockPolarity(SPI2, LL_SPI_POLARITY_LOW);
@@ -112,8 +112,8 @@ void SPI3Init() {
 	LL_GPIO_SetPinSpeed(GPIOC, LL_GPIO_PIN_12, LL_GPIO_SPEED_FREQ_HIGH);
 	LL_GPIO_SetPinOutputType(GPIOC, LL_GPIO_PIN_12, LL_GPIO_OUTPUT_PUSHPULL);
 
-	//Configure SPI Interface
-	LL_SPI_SetBaudRatePrescaler(SPI3, LL_SPI_BAUDRATEPRESCALER_DIV128);
+	//Configure SPI Interface in Full-Duplex Master Mode 0
+	LL_SPI_SetBaudRatePrescaler(SPI3, LL_SPI_BAUDRATEPRESCALER_DIV32);
 	LL_SPI_SetTransferDirection(SPI3,LL_SPI_FULL_DUPLEX);
 	LL_SPI_SetClockPhase(SPI3, LL_SPI_PHASE_1EDGE);
 	LL_SPI_SetClockPolarity(SPI3, LL_SPI_POLARITY_LOW);
