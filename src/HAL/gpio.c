@@ -72,6 +72,10 @@ void GPIOSetPinMode(uint8_t gpio, GPIOOutputMode mode) {
 	uint8_t port = (gpio >> 4);
 	uint8_t pin = gpio & 0x0F;
 	LL_GPIO_SetPinMode(gpioPorts[port], gpioPins[pin], gpioOutputMode[mode]);
+
+	if(mode == GPIO_Mode_Analog) {
+		LL_GPIO_SetPinPull(gpioPorts[port], gpioPins[pin], LL_GPIO_PULL_NO);
+	}
 }
 
 /**

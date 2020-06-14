@@ -135,7 +135,7 @@ uint8_t USBVCPIsConnected() {
 static int8_t USBVCPOnConnect() {
 	USBD_CDC_SetTxBuffer(&hUsbDeviceFS, usbTXBuffer, 0);
 	USBD_CDC_SetRxBuffer(&hUsbDeviceFS, usbRXBuffer);
-	USBD_CDC_ReceivePacket(&hUsbDeviceFS);
+//	USBD_CDC_ReceivePacket(&hUsbDeviceFS);
 	return USBD_OK;
 }
 

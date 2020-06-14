@@ -9,12 +9,11 @@ volatile uint32_t sysTickCnt = 0;			//Used for the Delay function
   */
 void SystemClockInit(void) {
 	/* Flash Latency configuration */
-	LL_FLASH_SetLatency(LL_FLASH_LATENCY_8);
+	LL_FLASH_SetLatency(LL_FLASH_LATENCY_7);
 
-	if(LL_FLASH_GetLatency() != LL_FLASH_LATENCY_8) {
+	if(LL_FLASH_GetLatency() != LL_FLASH_LATENCY_7) {
 		//Error_Handler();
 	}
-
 	LL_PWR_EnableRange1BoostMode();
 
 	//LL_RCC_HSE_EnableCSS();
@@ -46,7 +45,7 @@ void SystemClockInit(void) {
 	LL_RCC_SetAPB2Prescaler(LL_RCC_APB1_DIV_1);
 
 	LL_SetSystemCoreClock(160000000);
-	LL_RCC_SetUSBClockSource(LL_RCC_USB_CLKSOURCE_HSI48);		//Set USB Clock
+	LL_RCC_SetUSBClockSource(LL_RCC_USB_CLKSOURCE_HSI48);		//Set USB Clock Source
 }
 
 /**
