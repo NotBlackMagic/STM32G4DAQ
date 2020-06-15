@@ -1,10 +1,10 @@
 #include "ada4254.h"
 
-void ADA4254SetCurrent() {
+void ADA4254SetCurrent(CurrentValue value) {
 	uint8_t data[2];
 
 	data[0] = EX_CURRENT_CFG | ADA4254_WRITE_MASK;
-	data[1] = ((Iout_LV << 6) & EX_CURRENT_SEL_MASK) + (Curr_100uA & EX_CURRENT_MASK);
+	data[1] = ((Iout_LV << 6) & EX_CURRENT_SEL_MASK) + (value & EX_CURRENT_MASK);
 
 	GPIOWrite(GPIO_OUT_AMPA_CS, 0);
 

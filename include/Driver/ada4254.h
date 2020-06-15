@@ -10,7 +10,7 @@
 
 #include "ada4254_regs.h"
 
-void ADA4254SetCurrent();
+void ADA4254SetCurrent(CurrentValue value);
 uint8_t ADA4254GetRevisionID();
 
 #ifdef __cplusplus

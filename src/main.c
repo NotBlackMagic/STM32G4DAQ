@@ -7,6 +7,8 @@
 #include "uart.h"
 #include "usb_vcp.h"
 
+#include "ada4254.h"
+
 #include "pinMaping.h"
 
 int main(void) {
@@ -16,7 +18,7 @@ int main(void) {
 
 	//Initialize all configured peripherals
 	GPIOInit();
-//	USBVCPInit();
+	USBVCPInit();
 	SPI1Init();		//SPI to Analog A Block
 	SPI2Init();		//SPI to External Interface
 	SPI3Init();		//SPI to Analog B Block
@@ -39,11 +41,12 @@ int main(void) {
 	uint8_t rxUSBData[512];
 	uint16_t rxLength;
 
-	volatile uint8_t revID = ADA4254GetRevisionID();
+//	volatile uint8_t revID = ADA4254GetRevisionID();
+//	ADA4254SetCurrent(Curr_1mA);
 
-	while(1) {
-
-	}
+//	while(1) {
+//
+//	}
 
 	while(1) {
 		//USB/AT Command Interpreter
