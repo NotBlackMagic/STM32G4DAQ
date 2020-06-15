@@ -11,7 +11,7 @@
 #include "stm32g4xx_ll_spi.h"
 
 void SPI1Init();
-uint8_t SPI1ReadWrite(uint8_t txByte);
+uint16_t SPI1ReadWrite(uint16_t txByte);
 void SPI2Init();
 uint8_t SPI2ReadWrite(uint8_t txByte);
 void SPI3Init();

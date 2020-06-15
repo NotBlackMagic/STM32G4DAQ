@@ -98,7 +98,7 @@ typedef enum {
 	Curr_16uA
 } WBCurrent;
 
-#define GPIO_DIR					0x08	//GPIO Direction Register
+#define GPIO_DIR					0x08	//GPIO Direction Register (1-> Output, 0-> Input)
 
 #define SCS							0x09	//Sequential CS Register
 

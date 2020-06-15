@@ -10,6 +10,8 @@
 #include "stm32g4xx_ll_bus.h"
 #include "stm32g4xx_ll_gpio.h"
 
+extern volatile uint16_t analogCH1;
+
 void ADC1Init();
 void ADC1Start();
 

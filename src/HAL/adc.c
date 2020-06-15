@@ -1,5 +1,7 @@
 #include "adc.h"
 
+volatile uint16_t analogCH1;
+
 /**
   * @brief	This function initializes the ADC1 and respective GPIOs
   * @param	None
@@ -66,7 +68,7 @@ void ADC1Start() {
 uint8_t ledOn = 0x01;
 void ADC1_2_IRQHandler(void) {
 	if(LL_ADC_IsActiveFlag_EOC(ADC1) == 0x01 && LL_ADC_IsEnabled(ADC1) == 0x01) {
-		volatile uint16_t conv = LL_ADC_REG_ReadConversionData12(ADC1);
+		analogCH1 = LL_ADC_REG_ReadConversionData12(ADC1);
 
 		LL_ADC_ClearFlag_EOC(ADC1);
 	}

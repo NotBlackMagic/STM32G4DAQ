@@ -35,7 +35,7 @@ void SPI1Init() {
 	LL_SPI_SetClockPhase(SPI1, LL_SPI_PHASE_1EDGE);
 	LL_SPI_SetClockPolarity(SPI1, LL_SPI_POLARITY_LOW);
 	LL_SPI_SetTransferBitOrder(SPI1, LL_SPI_MSB_FIRST);
-	LL_SPI_SetDataWidth(SPI1, LL_SPI_DATAWIDTH_8BIT);
+	LL_SPI_SetDataWidth(SPI1, LL_SPI_DATAWIDTH_16BIT);
 	LL_SPI_SetNSSMode(SPI1, LL_SPI_NSS_SOFT);
 	LL_SPI_SetMode(SPI1, LL_SPI_MODE_MASTER);
 	LL_SPI_SetRxFIFOThreshold(SPI1, LL_SPI_RX_FIFO_TH_QUARTER);
@@ -137,17 +137,17 @@ void SPI3Init() {
 }
 
 /**
-  * @brief	This function performs a byte transfer on SPI1 (read and write 1 byte)
+  * @brief	This function performs a 16-bit transfer on SPI1 (read and write 16-bits)
   * @param	txByte: Single Byte to be transmitted
   * @return	received single byte
   */
-uint8_t SPI1ReadWrite(uint8_t txByte) {
-	uint8_t rxByte;
+uint16_t SPI1ReadWrite(uint16_t txByte) {
+	uint16_t rxByte;
 
 	while(!LL_SPI_IsActiveFlag_TXE(SPI1));
-	LL_SPI_TransmitData8(SPI1, txByte);
+	LL_SPI_TransmitData16(SPI1, txByte);
 	while(!LL_SPI_IsActiveFlag_RXNE(SPI1));
-	rxByte = LL_SPI_ReceiveData8(SPI1);
+	rxByte = LL_SPI_ReceiveData16(SPI1);
 
 	return rxByte;
 }

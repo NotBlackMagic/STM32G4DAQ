@@ -10,8 +10,13 @@
 
 #include "ada4254_regs.h"
 
-void ADA4254SetCurrent(CurrentValue value);
+void ADA4254Init();
+
 uint8_t ADA4254GetRevisionID();
+uint8_t ADA4254SetCurrent(CurrentValue value);
+
+void ADA4254WriteRegister(uint8_t reg, uint8_t data);
+uint8_t ADA4254ReadRegister(uint8_t reg);
 
 #ifdef __cplusplus
 }

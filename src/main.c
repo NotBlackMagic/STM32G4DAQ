@@ -34,20 +34,17 @@ int main(void) {
 	DAC1Write(1, 2048);
 	DAC1Write(2, 1024);
 
-	//Turn Status LED on
-	GPIOWrite(GPIO_OUT_STATUS_LED, 0x01);
+	//Init Analog Channels
+	ADA4254Init();
+
+	//Give time for all to init, ADA4254 auto-calibration for example
+	Delay(1000);
+
+	uint32_t timestamp = 0;
 
 	uint8_t isVCPConnected = 0;
 	uint8_t rxUSBData[512];
 	uint16_t rxLength;
-
-//	volatile uint8_t revID = ADA4254GetRevisionID();
-//	ADA4254SetCurrent(Curr_1mA);
-
-//	while(1) {
-//
-//	}
-
 	while(1) {
 		//USB/AT Command Interpreter
 		if(USBVCPRead(rxUSBData, &rxLength) == 1) {
@@ -70,6 +67,14 @@ int main(void) {
 			isVCPConnected = 0;
 		}
 		GPIOWrite(GPIO_OUT_STATUS_LED, USBVCPIsConnected());
+
+		if(timestamp + 1000 < GetSysTick()) {
+			timestamp = GetSysTick();
+
+			uint8_t str[100];
+			uint8_t len = sprintf(str, "AN CH1: %d \n", analogCH1);
+			USBVCPWrite(str, len);
+		}
 	}
 }
 
