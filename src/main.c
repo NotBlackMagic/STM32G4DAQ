@@ -34,11 +34,11 @@ int main(void) {
 	DAC1Write(1, 2048);
 	DAC1Write(2, 1024);
 
-	//Init Analog Channels
-	ADA4254Init();
-
 	//Give time for all to init, ADA4254 auto-calibration for example
 	Delay(1000);
+
+	//Init Analog Channels
+	ADA4254Init();
 
 	uint32_t timestamp = 0;
 

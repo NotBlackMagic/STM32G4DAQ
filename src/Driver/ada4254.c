@@ -54,8 +54,6 @@ void ADA4254WriteRegister(uint8_t reg, uint8_t data) {
 	GPIOWrite(GPIO_OUT_AMPA_CS, 0);
 	SPI1ReadWrite(txData);
 	GPIOWrite(GPIO_OUT_AMPA_CS, 1);
-
-	Delay(10);
 }
 
 uint8_t ADA4254ReadRegister(uint8_t reg) {
