@@ -1,7 +1,7 @@
 #include "usb_vcp.h"
 
-#define USB_RX_BUFFER_LENGTH		512
-#define USB_TX_BUFFER_LENGTH		512
+#define USB_RX_BUFFER_LENGTH		1024
+#define USB_TX_BUFFER_LENGTH		1024
 
 //USB Device Core handle declaration
 USBD_HandleTypeDef hUsbDeviceFS;
@@ -148,6 +148,8 @@ static int8_t USBVCPOnDisconnect() {
 	return USBD_OK;
 }
 
+
+static uint8_t lineCoding[7] = {0,0,0,0,0,0,0};	// 115200bps, 1stop, no parity, 8bit
 /**
   * @brief	Manage the CDC class requests
   * @param  cmd: Command code
@@ -190,9 +192,35 @@ static int8_t USBVCPControl(uint8_t cmd, uint8_t* pbuf, uint16_t length) {
 		/* 6      | bDataBits  |   1   | Number Data bits (5, 6, 7, 8 or 16).          */
 		/*******************************************************************************/
 		case CDC_SET_LINE_CODING: {
+//			memcpy(lineCoding, pbuf, sizeof(lineCoding));
+			lineCoding[0] = pbuf[0];
+			lineCoding[1] = pbuf[1];
+			lineCoding[2] = pbuf[2];
+			lineCoding[3] = pbuf[3];
+			lineCoding[4] = pbuf[4];
+			lineCoding[5] = pbuf[5];
+			lineCoding[6] = pbuf[6];
+
+			uint32_t baudrate = lineCoding[0] + (lineCoding[1] << 8) + (lineCoding[2] << 16) + (lineCoding[3] << 24);
+
+			if(baudrate > 115200) {
+				usbCOMPortOpen = 1;
+			}
+			else {
+				usbCOMPortOpen = 0;
+			}
+
 			break;
 		}
 		case CDC_GET_LINE_CODING: {
+//			memcpy(pbuf, lineCoding, sizeof(lineCoding));
+			pbuf[0]=lineCoding[0];
+			pbuf[1]=lineCoding[1];
+			pbuf[2]=lineCoding[2];
+			pbuf[3]=lineCoding[3];
+			pbuf[4]=lineCoding[4];
+			pbuf[5]=lineCoding[5];
+			pbuf[6]=lineCoding[6];
 			break;
 		}
 		case CDC_SET_CONTROL_LINE_STATE: {
@@ -201,7 +229,7 @@ static int8_t USBVCPControl(uint8_t cmd, uint8_t* pbuf, uint16_t length) {
 				usbCOMPortOpen = 1;
 			}
 			else {
-				usbCOMPortOpen = 0;
+//				usbCOMPortOpen = 0;
 			}
 			break;
 		}

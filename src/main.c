@@ -68,13 +68,13 @@ int main(void) {
 		}
 		GPIOWrite(GPIO_OUT_STATUS_LED, USBVCPIsConnected());
 
-		if(timestamp + 1000 < GetSysTick()) {
-			timestamp = GetSysTick();
-
-			uint8_t str[100];
-			uint8_t len = sprintf(str, "AN CH1: %d \n", analogCH1);
-			USBVCPWrite(str, len);
-		}
+//		if(timestamp + 1000 < GetSysTick()) {
+//			timestamp = GetSysTick();
+//
+//			uint8_t str[100];
+//			uint8_t len = sprintf(str, "AN CH1: %d \n", analogCH1);
+//			USBVCPWrite(str, len);
+//		}
 	}
 }
 
