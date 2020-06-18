@@ -13,7 +13,6 @@
 #define GAIN_MUX					0x00	//GAIN_MUX Register
 #define OUT_SCAL_1375_MASK			0x80	//Output Amplifier Scaling Gain Mask: G4 (1.375 V/V)
 #define IN_AMP_GAIN_MASK			0x78	//Input Amplifier Gain setting Mask: G[3:0]
-#define EXT_MUX_MASK				0x03	//External Multiplexer Control Mask (GPIO0 & GPIO1)
 typedef enum {
 	Gain_1_16,
 	Gain_1_8,
@@ -28,6 +27,7 @@ typedef enum {
 	Gain_64,
 	Gain_128
 } InputGain;
+#define EXT_MUX_MASK				0x03	//External Multiplexer Control Mask (GPIO0 & GPIO1)
 
 #define RESET						0x01	//Software Reset Register
 #define RESET_MASK					0x01	//Software Reset Bit Mask

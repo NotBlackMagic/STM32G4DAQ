@@ -24,7 +24,6 @@ void GPIOInit() {
 	GPIOSetPinMode(GPIO_OUT_ADCA_CS, GPIO_Mode_Output);
 	GPIOSetPinMode(GPIO_OUT_AMPA_CS, GPIO_Mode_Output);
 	GPIOSetPinMode(GPIO_OUT_DACA_CS, GPIO_Mode_Output);
-	GPIOSetPinMode(GPIO_OUT_ADCAB_CS, GPIO_Mode_Output);
 	GPIOSetPinMode(GPIO_OUT_AMPB_CS ,GPIO_Mode_Output);
 	GPIOSetPinMode(GPIO_OUT_DACB_CS ,GPIO_Mode_Output);
 	GPIOSetPinMode(GPIO_OUT_STATUS_LED ,GPIO_Mode_Output);

@@ -4,6 +4,7 @@
 #include "rcc.h"
 #include "spi.h"
 #include "system.h"
+#include "timer.h"
 #include "uart.h"
 #include "usb_vcp.h"
 
@@ -18,6 +19,11 @@ int main(void) {
 
 	//Initialize all configured peripherals
 	GPIOInit();
+
+	GPIOSetPinMode(GPIO_IO_GPIO0, GPIO_Mode_Output);
+
+	TIM3Init();
+
 	USBVCPInit();
 	SPI1Init();		//SPI to Analog A Block
 	SPI2Init();		//SPI to External Interface
@@ -38,7 +44,7 @@ int main(void) {
 	Delay(1000);
 
 	//Init Analog Channels
-	ADA4254Init();
+	ADA4254Init(ANALOG_IN_BLOCK_A);
 
 	uint32_t timestamp = 0;
 
@@ -48,7 +54,7 @@ int main(void) {
 	while(1) {
 		//USB/AT Command Interpreter
 		if(USBVCPRead(rxUSBData, &rxLength) == 1) {
-
+			CommandInterpreter(rxUSBData, rxLength);
 		}
 
 		//This Sets the LED1 to the Virtual COM Connection state, LED is ON if connected
