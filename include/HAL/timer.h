@@ -12,6 +12,7 @@
 #include "stm32g4xx_ll_tim.h"
 
 void TIM3Init();
+void TIM3SetFreq(uint32_t freq);
 
 #ifdef __cplusplus
 }

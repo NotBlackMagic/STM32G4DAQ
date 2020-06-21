@@ -1,9 +1,5 @@
 #include "adc.h"
 
-#include "pinMaping.h"
-
-volatile uint16_t analogCH1;
-
 /**
   * @brief	This function initializes the ADC1 and respective GPIOs
   * @param	None
@@ -25,16 +21,17 @@ void ADC1Init() {
 	LL_ADC_REG_SetOverrun(ADC1, LL_ADC_REG_OVR_DATA_OVERWRITTEN);
 	LL_ADC_SetGainCompensation(ADC1, 0x00);
 	LL_ADC_SetOverSamplingScope(ADC1, LL_ADC_OVS_DISABLE);
-//	LL_ADC_ConfigOverSamplingRatioShift(ADC1, LL_ADC_OVS_RATIO_256, LL_ADC_OVS_SHIFT_RIGHT_4);
+//	LL_ADC_SetOverSamplingScope(ADC1, LL_ADC_OVS_GRP_REGULAR_CONTINUED);
+//	LL_ADC_ConfigOverSamplingRatioShift(ADC1, LL_ADC_OVS_RATIO_4, LL_ADC_OVS_SHIFT_RIGHT_2);
 //	LL_ADC_SetOverSamplingDiscont(ADC1, LL_ADC_OVS_REG_CONT);
 	LL_ADC_DisableDeepPowerDown(ADC1);
 	LL_ADC_EnableInternalRegulator(ADC1);
-	LL_ADC_SetCommonClock(__LL_ADC_COMMON_INSTANCE(ADC1), LL_ADC_CLOCK_SYNC_PCLK_DIV4);		//Set Fadc = 160 / 4 = 40 MHz (Fadc < 60 MHz)
+	LL_ADC_SetCommonClock(__LL_ADC_COMMON_INSTANCE(ADC1), LL_ADC_CLOCK_ASYNC_DIV1);		//Set Fadc = ASYNC(PLLQ = 60M) (Fadc <= 60 MHz)
 	LL_ADC_SetMultimode(__LL_ADC_COMMON_INSTANCE(ADC1), LL_ADC_MULTI_INDEPENDENT);
 
 	//Configure Input Channel
 	LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_1, LL_ADC_CHANNEL_1);
-	LL_ADC_SetChannelSamplingTime(ADC1, LL_ADC_CHANNEL_1, LL_ADC_SAMPLINGTIME_2CYCLES_5);	//Should give Fs = 40MHz / (2.5 + 12.5) = 2.67 MSps
+	LL_ADC_SetChannelSamplingTime(ADC1, LL_ADC_CHANNEL_1, LL_ADC_SAMPLINGTIME_6CYCLES_5);	//Should give Fs = 60MHz / (6.5 + 12.5) = 3.16 MSps
 	LL_ADC_SetChannelSingleDiff(ADC1, LL_ADC_CHANNEL_1, LL_ADC_DIFFERENTIAL_ENDED);
 
 	//Run ADC self calibration
@@ -67,19 +64,9 @@ void ADC1Start() {
   * @param	None
   * @return	None
   */
-uint8_t ledOn = 0x01;
 void ADC1_2_IRQHandler(void) {
 	if(LL_ADC_IsActiveFlag_EOC(ADC1) == 0x01 && LL_ADC_IsEnabled(ADC1) == 0x01) {
-		analogCH1 = LL_ADC_REG_ReadConversionData12(ADC1);
-
-		GPIOWrite(GPIO_IO_GPIO0, ledOn);
-
-		if(ledOn == 0x01) {
-			ledOn = 0x00;
-		}
-		else {
-			ledOn = 0x01;
-		}
+		AnalogInHandler(ANALOG_IN_BLOCK_A);
 
 		LL_ADC_ClearFlag_EOC(ADC1);
 	}

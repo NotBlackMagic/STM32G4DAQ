@@ -103,34 +103,16 @@ typedef enum {
 #define SCS							0x09	//Sequential CS Register
 
 #define ANALOG_ERR_DIS				0x0A	//Analog Error Mask Register
-typedef union {
-	struct {
-		uint8_t gainRestMask : 1;	//Gain Reset Flag Mask
-		uint8_t porHVMask : 1;		//Power-On Reset HV Supply Flag Mask
-		uint8_t none0 : 1;			//Reserved
-		uint8_t wbErrMask : 1;		//Wire Break Detector Error Flag Mask
-		uint8_t faultIntMask : 1;	//Fault Interrupt Flag Mask
-		uint8_t outAmpErrMask : 1;	//Output Amplifier Error Flag Mask
-		uint8_t inAmpErrMask : 1;	//Input Amplifier Error Flag Mask
-		uint8_t muxOVErrMask : 1;	//Input Multiplexer Overvoltage Error Flag Mask
-	};
-	uint8_t raw;
-} AnalogErrorMask;
+#define G_RST_DIS_MASK				0x80	//Disable Gain Reset Error Flag Mask
+#define POR_HV_DIS					0x40	//Disable High Voltage Power Reset Flag Mask
+#define WB_ERR_DIS					0x10	//Disable Wire-Break Detection Flag Mask
+#define MUX_PROT_DIS				0x08	//Disable Input Multiplexer Protection Mask
+#define OUTPUT_ERR_DIS				0x04	//Disable Output Amplifier Error Flag Mask
+#define INPUT_ERR_DIS				0x02	//Disable Input Amplifier Error Flag Mask
+#define MUX_OVER_VOLT_ERR_DIS		0x01	//—Disable Multiplexer Overvoltage Flag Mask
 
 #define DIGITAL_ERR_DIS				0x0B	//Digital Error Mask Register
-typedef union {
-	struct {
-		uint8_t none0 : 1;				//Reserved
-		uint8_t calBusyMask : 1;		//Calibration Busy Flag Mask
-		uint8_t spiCRCErrMask : 1;		//SPI CRC Error Flag Mask
-		uint8_t spiRWErrMask : 1;		//SPI Read/Write Error Flag Mask
-		uint8_t spiSCLKCntErrMask : 1;	//SPI SCLK Count Error Flag Mask
-		uint8_t none1 : 1;				//Reserved
-		uint8_t memMapCRCErrMask : 1;	//Memory Map CRC Error Flag Mask
-		uint8_t romCRCErrMask : 1;		//ROM CRC Error Flag Mask
-	};
-	uint8_t raw;
-} DigitalErrorMask;
+
 
 #define SF_CFG						0x0C	//Special Function Configuration Register
 #define INT_CLK_OUT_MASK			0x20	//Internal Oscillator Output on GPIO4 Mask

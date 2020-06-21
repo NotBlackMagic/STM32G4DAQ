@@ -1,7 +1,7 @@
 #include "usb_vcp.h"
 
-#define USB_RX_BUFFER_LENGTH		1024
-#define USB_TX_BUFFER_LENGTH		1024
+#define USB_RX_BUFFER_LENGTH				512
+#define USB_TX_BUFFER_LENGTH				512
 
 //USB Device Core handle declaration
 USBD_HandleTypeDef hUsbDeviceFS;
@@ -57,6 +57,16 @@ uint8_t USBVCPInit() {
 }
 
 /**
+  * @brief	This function returns the status of USB TX
+  * @param	None
+  * @return	0 -> No TX in progress, 1 -> TX in progress
+  */
+uint8_t USBVCPTXStatus() {
+	USBD_CDC_HandleTypeDef* hcdc = (USBD_CDC_HandleTypeDef*)hUsbDeviceFS.pClassData;
+	return hcdc->TxState;
+}
+
+/**
   * @brief	This function reads the USB VCP receive buffer
   * @param	data: data array to where the received data should be copied to
   * @param	length: length of the received array, is set in this function
@@ -84,6 +94,7 @@ uint8_t USBVCPRead(uint8_t* data, uint16_t* length) {
 		return 0;
 	}
 }
+
 
 /**
   * @brief	This function writes data over USB VCP

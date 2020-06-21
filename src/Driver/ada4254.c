@@ -11,12 +11,16 @@ void ADA4254Init(uint8_t anBlock) {
 	ADA4254WriteRegister(anBlock, SF_CFG, 0x03);		//Set GPIO Special Functions
 	ADA4254WriteRegister(anBlock, GPIO_DATA, 0x04);	//Set GPIO Output Values
 
+	//Disable Input Multiplexer Protection, allow IN1 and IN2 mixing
+	data = MUX_PROT_DIS;
+	ADA4254WriteRegister(anBlock, ANALOG_ERR_DIS, data);
+
 	//Set Internal Mux connections: Set to IN1+ and IN1-
-	data = SW_A1_MASK + SW_A2_MASK;
+	data = SW_A1_MASK + SW_B2_MASK;
 	ADA4254WriteRegister(anBlock, INPUT_MUX, data);
 
-	//Set Input gain: 1; Output scaling: 1 V/V; External MUX: CH4 -> Channel 1
-	data = ((Gain_1 << 3) & IN_AMP_GAIN_MASK) + (0x03 & EXT_MUX_MASK);
+	//Set Input gain: 1/16; Output scaling: 1 V/V; External MUX: CH4 -> Channel 1
+	data = ((Gain_1_16 << 3) & IN_AMP_GAIN_MASK) + (0x03 & EXT_MUX_MASK);
 	ADA4254WriteRegister(anBlock, GAIN_MUX, data);
 }
 

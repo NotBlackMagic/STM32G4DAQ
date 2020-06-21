@@ -8,6 +8,7 @@
 #include "opcodes.h"
 
 #include "ada4254.h"
+#include "analogIn.h"
 
 uint8_t CommandInterpreter(uint8_t* data, uint16_t dataLength);
 

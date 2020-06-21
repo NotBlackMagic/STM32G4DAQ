@@ -14,7 +14,7 @@ void SystemClockInit(void) {
 	if(LL_FLASH_GetLatency() != LL_FLASH_LATENCY_7) {
 		//Error_Handler();
 	}
-	LL_PWR_EnableRange1BoostMode();
+	LL_PWR_SetRegulVoltageScaling(LL_PWR_REGU_VOLTAGE_SCALE1);
 
 	//LL_RCC_HSE_EnableCSS();
 	LL_RCC_HSE_EnableBypass();
@@ -24,8 +24,10 @@ void SystemClockInit(void) {
 	LL_RCC_HSI48_Enable();
 	while(LL_RCC_HSI48_IsReady() != 1);		//Wait till HSI48 is ready
 
-	LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSE, LL_RCC_PLLM_DIV_4, 80, LL_RCC_PLLR_DIV_2);
+	LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSE, LL_RCC_PLLM_DIV_4, 75, LL_RCC_PLLR_DIV_2);
+	LL_RCC_PLL_ConfigDomain_ADC(LL_RCC_PLLSOURCE_HSE, LL_RCC_PLLM_DIV_4, 75, LL_RCC_PLLP_DIV_5);
 	LL_RCC_PLL_EnableDomain_SYS();
+	LL_RCC_PLL_EnableDomain_ADC();
 	LL_RCC_PLL_Enable();
 	while(LL_RCC_PLL_IsReady() != 1);		//Wait till PLL is ready
 
@@ -43,9 +45,10 @@ void SystemClockInit(void) {
 	LL_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
 	LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_1);
 	LL_RCC_SetAPB2Prescaler(LL_RCC_APB1_DIV_1);
+	LL_SetSystemCoreClock(150000000);
 
-	LL_SetSystemCoreClock(160000000);
 	LL_RCC_SetUSBClockSource(LL_RCC_USB_CLKSOURCE_HSI48);		//Set USB Clock Source
+	LL_RCC_SetADCClockSource(LL_RCC_ADC12_CLKSOURCE_PLL);
 }
 
 /**
@@ -55,10 +58,10 @@ void SystemClockInit(void) {
   */
 void SystemTickInit() {
 	//Set systick to 1ms in using frequency set to 170MHz
-	LL_Init1msTick(160000000);
+	LL_Init1msTick(150000000);
 
 	//Update CMSIS variable (which can be updated also through SystemCoreClockUpdate function)
-	LL_SetSystemCoreClock(160000000);
+	LL_SetSystemCoreClock(150000000);
 
 	LL_SYSTICK_EnableIT();
 }

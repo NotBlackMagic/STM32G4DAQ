@@ -9,7 +9,8 @@
 #include "usb_vcp.h"
 
 #include "ada4254.h"
-
+#include "analogIn.h"
+#include "opcodes.h"
 #include "pinMaping.h"
 
 int main(void) {
@@ -44,11 +45,13 @@ int main(void) {
 	Delay(1000);
 
 	//Init Analog Channels
-	ADA4254Init(ANALOG_IN_BLOCK_A);
+	AnalogInInit();
 
 	uint32_t timestamp = 0;
 
 	uint8_t isVCPConnected = 0;
+	uint8_t txUSBData[512];
+	uint16_t txLength;
 	uint8_t rxUSBData[512];
 	uint16_t rxLength;
 	while(1) {
@@ -61,11 +64,6 @@ int main(void) {
 		if(USBVCPIsConnected()) {
 			if(isVCPConnected == 0) {
 				//First Connection, write welcome message
-				USBVCPWrite("Welcome to VUHFRadio V1! \n", 26);
-				USBVCPWrite("Hardware Version: 1.3, May 2020 \n", 33);
-				USBVCPWrite("Software Version: 0.9, May 2020 \n", 33);
-				USBVCPWrite("This Module uses AT Commands, for more info write AT+LIST \n", 59);
-
 				isVCPConnected = 1;
 			}
 		}
@@ -74,13 +72,30 @@ int main(void) {
 		}
 		GPIOWrite(GPIO_OUT_STATUS_LED, USBVCPIsConnected());
 
-//		if(timestamp + 1000 < GetSysTick()) {
-//			timestamp = GetSysTick();
-//
-//			uint8_t str[100];
-//			uint8_t len = sprintf(str, "AN CH1: %d \n", analogCH1);
-//			USBVCPWrite(str, len);
-//		}
+		//Check if USB TX is ready for new data
+		if(USBVCPTXStatus() == 0x00) {
+			uint16_t dataLength = AnalogInGetData(1, 1, &txUSBData[4]);
+			if(dataLength != 0x00) {
+				txUSBData[0] = OPCODE_TX_ANALOG_IN_A;	//Set Opcode
+				txUSBData[1] = 0x00;	//Set Packet Length
+				txUSBData[2] = 0x00;	//Set Packet Length
+				txUSBData[3] = 0x01;	//Set Analog In Channel
+
+				//Set Packet Length
+				dataLength += 1;	//Add the channel number byte to length
+				txUSBData[1] = (dataLength >> 8);
+				txUSBData[2] = (dataLength);
+
+				//Add CRC
+				txUSBData[3 + dataLength] = 0x00;
+				txUSBData[4 + dataLength] = 0x00;
+
+				//Add Opcode, length and CRC bytes to length
+				dataLength += 5;
+
+				USBVCPWrite(txUSBData, dataLength);
+			}
+		}
 	}
 }
 

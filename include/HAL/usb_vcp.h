@@ -17,6 +17,7 @@ extern USBD_CDC_ItfTypeDef USBD_Interface_fops_FS;
 
 uint8_t USBVCPInit();
 uint8_t USBVCPIsConnected();
+uint8_t USBVCPTXStatus();
 uint8_t USBVCPRead(uint8_t* data, uint16_t* length);
 uint8_t USBVCPWrite(uint8_t* data, uint16_t length);
 

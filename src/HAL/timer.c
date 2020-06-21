@@ -35,6 +35,11 @@ void TIM3Init() {
 	LL_TIM_GenerateEvent_UPDATE(TIM3);
 }
 
+void TIM3SetFreq(uint32_t freq) {
+	LL_TIM_SetAutoReload(TIM3, __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM3), freq));	//Set output clock to freq
+	LL_TIM_OC_SetCompareCH1(TIM3, ( (LL_TIM_GetAutoReload(TIM3) + 1 ) / 2)); 							//Set Output duty-cycle to 50%
+}
+
 void TIM3_IRQHandler(void) {
 	if(LL_TIM_IsActiveFlag_CC1(TIM3) == 1) {
 		LL_TIM_ClearFlag_CC1(TIM3);
