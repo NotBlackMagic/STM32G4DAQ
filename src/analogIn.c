@@ -34,12 +34,12 @@ void AnalogInInit() {
 	for(i = 0; i < 4; i++) {
 		//Init Analog In Block A Channel structs
 		analogInAChannels[i].channel = i + 1;
-		analogInAChannels[i].config = (AnalogInCHConfigStruct){0x00, Divison_1, Resolution_12Bit, Gain_1};
+		analogInAChannels[i].config = (AnalogInCHConfigStruct){0x00, Divison_1, Resolution_12Bit, Gain_1_8};
 		analogInAChannels[i].bufferIndex = 0;
 
 		//Init Analog In Block B Channel structs
 		analogInBChannels[i].channel = i + 1;
-		analogInBChannels[i].config = (AnalogInCHConfigStruct){0x00, Divison_1, Resolution_12Bit, Gain_1};
+		analogInBChannels[i].config = (AnalogInCHConfigStruct){0x00, Divison_1, Resolution_12Bit, Gain_1_8};
 		analogInBChannels[i].bufferIndex = 0;
 	}
 

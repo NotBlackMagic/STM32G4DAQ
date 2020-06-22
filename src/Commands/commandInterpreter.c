@@ -36,6 +36,19 @@ uint8_t CommandInterpreter(uint8_t* data, uint16_t dataLength) {
 			AnalogInConfigChannel(ANALOG_IN_BLOCK_A, channel, config);
 			break;
 		}
+		case OPCODE_SET_ANALOG_OUT_A_CH: {
+			AnalogOutCHConfigStruct config;
+
+			uint8_t channel = data[COMMAND_PAYLOAD_OFFSET+0];
+			config.mode = data[COMMAND_PAYLOAD_OFFSET+1];
+			config.offset = (data[COMMAND_PAYLOAD_OFFSET+2] << 8) + data[COMMAND_PAYLOAD_OFFSET+3];
+			config.frequency = (data[COMMAND_PAYLOAD_OFFSET+4] << 16) + (data[COMMAND_PAYLOAD_OFFSET+5] << 8) + data[COMMAND_PAYLOAD_OFFSET+6];
+			config.amplitude = (data[COMMAND_PAYLOAD_OFFSET+7] << 8) + data[COMMAND_PAYLOAD_OFFSET+8];
+			config.dc = data[COMMAND_PAYLOAD_OFFSET+9];
+
+			AnalogOutConfigChannel(ANALOG_OUT_BLOCK_A, channel, config);
+			break;
+		}
 		default:
 			return 1;
 			break;
