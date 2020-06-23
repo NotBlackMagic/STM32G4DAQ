@@ -21,7 +21,7 @@ void GPIOInit() {
 //	PWR->CR &= 0xFFFFFEFF;
 
 	//Set Fixed Output GPIO's
-	GPIOSetPinMode(GPIO_OUT_ADCA_CS, GPIO_Mode_Output);
+//	GPIOSetPinMode(GPIO_OUT_ADCA_CS, GPIO_Mode_Output);
 	GPIOSetPinMode(GPIO_OUT_AMPA_CS, GPIO_Mode_Output);
 	GPIOSetPinMode(GPIO_OUT_DACA_CS, GPIO_Mode_Output);
 	GPIOSetPinMode(GPIO_OUT_AMPB_CS ,GPIO_Mode_Output);
@@ -52,7 +52,7 @@ void GPIOInit() {
 	GPIOSetPinMode(GPIO_DAC_B_CH2, GPIO_Mode_Analog);
 
 	//Set Output Pins to Initial State
-	GPIOWrite(GPIO_OUT_ADCA_CS, 1);
+//	GPIOWrite(GPIO_OUT_ADCA_CS, 1);
 	GPIOWrite(GPIO_OUT_AMPA_CS, 1);
 	GPIOWrite(GPIO_OUT_DACA_CS, 1);
 	GPIOWrite(GPIO_OUT_ADCAB_CS, 1);

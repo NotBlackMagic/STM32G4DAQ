@@ -135,15 +135,22 @@ void AnalogInConfigChannel(uint8_t anBlock, uint8_t channel, AnalogInCHConfigStr
 
 		if(config.enabled != 0x00) {
 			uint8_t division = (0x01 << config.division);
+			uint8_t indexOffset = 0;
+
+			if(division > 1) {
+				indexOffset = channel - 1;
+			}
+
 			uint8_t i;
-			for(i = 0; i < ANALOG_IN_SEQUENCER_LENGTH; i++) {
-				if((i % division) == 0x00) {
+			for(i = indexOffset; i < ANALOG_IN_SEQUENCER_LENGTH; i++) {
+				if(((i - indexOffset) % division) == 0x00) {
 					analogInACHSequencer[i] = channel;
 				}
 				else if(analogInACHSequencer[i] == channel) {
 					analogInACHSequencer[i] = 0;
 				}
 			}
+
 		}
 		else {
 			uint8_t i;

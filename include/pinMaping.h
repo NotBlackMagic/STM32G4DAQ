@@ -5,6 +5,9 @@
 extern "C" {
 #endif
 
+#define ANALOG_IN_BLOCK_A					0x01
+#define ANALOG_IN_BLOCK_B					0x02
+
 //Fixed Input Pin Mapping
 
 //Fixed Output Pin Mapping

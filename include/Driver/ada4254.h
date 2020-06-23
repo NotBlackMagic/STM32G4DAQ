@@ -10,9 +10,6 @@
 
 #include "ada4254_regs.h"
 
-#define ANALOG_IN_BLOCK_A					0x01
-#define ANALOG_IN_BLOCK_B					0x02
-
 void ADA4254Init(uint8_t anBlock);
 
 uint8_t ADA4254GetRevisionID();

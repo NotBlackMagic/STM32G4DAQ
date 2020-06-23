@@ -44,7 +44,7 @@ uint8_t CommandInterpreter(uint8_t* data, uint16_t dataLength) {
 			config.offset = (data[COMMAND_PAYLOAD_OFFSET+2] << 8) + data[COMMAND_PAYLOAD_OFFSET+3];
 			config.frequency = (data[COMMAND_PAYLOAD_OFFSET+4] << 16) + (data[COMMAND_PAYLOAD_OFFSET+5] << 8) + data[COMMAND_PAYLOAD_OFFSET+6];
 			config.amplitude = (data[COMMAND_PAYLOAD_OFFSET+7] << 8) + data[COMMAND_PAYLOAD_OFFSET+8];
-			config.dc = data[COMMAND_PAYLOAD_OFFSET+9];
+			config.dtc = data[COMMAND_PAYLOAD_OFFSET+9];
 
 			AnalogOutConfigChannel(ANALOG_OUT_BLOCK_A, channel, config);
 			break;

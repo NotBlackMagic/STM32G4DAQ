@@ -11,8 +11,14 @@
 #include "stm32g4xx_ll_gpio.h"
 #include "stm32g4xx_ll_tim.h"
 
+#include "analogOut.h"
+#include "pinMaping.h"
+
 void TIM3Init();
+void TIM4Init();
+void TIM6Init();
 void TIM3SetFreq(uint32_t freq);
+void TIM4SetFreq(uint32_t freq);
 
 #ifdef __cplusplus
 }

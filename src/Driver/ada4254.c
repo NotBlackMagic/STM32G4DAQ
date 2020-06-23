@@ -6,9 +6,10 @@ void ADA4254Init(uint8_t anBlock) {
 	//Set the GPIO Functions
 	// -GPIO0/1 as Mux selector
 	// -GPIO2 as Mux Enable
-	// -GPIO4 Nothing yet
+	// -GPIO4 CLK input (1 MHz)
 	ADA4254WriteRegister(anBlock, GPIO_DIR, 0x07);	//Set GPIO Directions
 	ADA4254WriteRegister(anBlock, SF_CFG, 0x03);	//Set GPIO Special Functions
+//	ADA4254WriteRegister(anBlock, SYNC_CFG, Div_1);	//Set Input Clock division
 	ADA4254WriteRegister(anBlock, GPIO_DATA, 0x04);	//Set GPIO Output Values
 
 	//Disable Input Multiplexer Protection, allow IN1 and IN2 mixing

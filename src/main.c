@@ -20,18 +20,15 @@ int main(void) {
 
 	//Initialize all configured peripherals
 	GPIOInit();
-
-	GPIOSetPinMode(GPIO_IO_GPIO0, GPIO_Mode_Output);
-
-	TIM3Init();
-
 	USBVCPInit();
 	SPI1Init();		//SPI to Analog A Block
 	SPI2Init();		//SPI to External Interface
 	SPI3Init();		//SPI to Analog B Block
 	UART1Init();
 	SystemVrefEnable(VRef_2048);
+	TIM4Init();
 	ADC1Init();
+	TIM6Init();
 	DAC1Init();
 
 	//Start ADC Conversions
@@ -46,6 +43,7 @@ int main(void) {
 
 	//Init Analog Channels
 	AnalogInInit();
+	AnalogOutInit();
 
 	uint32_t timestamp = 0;
 
@@ -74,26 +72,27 @@ int main(void) {
 
 		//Check if USB TX is ready for new data
 		if(USBVCPTXStatus() == 0x00) {
-			uint16_t dataLength = AnalogInGetData(1, 1, &txUSBData[4]);
-			if(dataLength != 0x00) {
-				txUSBData[0] = OPCODE_TX_ANALOG_IN_A;	//Set Opcode
-				txUSBData[1] = 0x00;	//Set Packet Length
-				txUSBData[2] = 0x00;	//Set Packet Length
-				txUSBData[3] = 0x01;	//Set Analog In Channel
+			uint16_t txUSBDataIndex = 0;
+			uint8_t channel = 1;
+			for(channel = 1; channel < 5; channel++) {
+				uint16_t dataLength = AnalogInGetData(1, channel, &txUSBData[4]);
+				if(dataLength != 0x00) {
+					txUSBData[txUSBDataIndex++] = OPCODE_TX_ANALOG_IN_A;	//Set Opcode
+					txUSBData[txUSBDataIndex++] = (dataLength >> 8);		//Set Packet Length
+					txUSBData[txUSBDataIndex++] = (dataLength);				//Set Packet Length
+					txUSBData[txUSBDataIndex++] = channel;					//Set Analog In Channel
 
-				//Set Packet Length
-				dataLength += 1;	//Add the channel number byte to length
-				txUSBData[1] = (dataLength >> 8);
-				txUSBData[2] = (dataLength);
+					//Add payload
+					txUSBDataIndex += dataLength;
 
-				//Add CRC
-				txUSBData[3 + dataLength] = 0x00;
-				txUSBData[4 + dataLength] = 0x00;
+					//Add CRC
+					txUSBData[txUSBDataIndex++] = 0x00;
+					txUSBData[txUSBDataIndex++] = 0x00;
+				}
+			}
 
-				//Add Opcode, length and CRC bytes to length
-				dataLength += 5;
-
-				USBVCPWrite(txUSBData, dataLength);
+			if(txUSBDataIndex > 1) {
+				USBVCPWrite(txUSBData, txUSBDataIndex);
 			}
 		}
 	}
