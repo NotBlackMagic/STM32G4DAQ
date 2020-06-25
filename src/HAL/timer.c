@@ -1,5 +1,10 @@
 #include "timer.h"
 
+/**
+  * @brief	This function initializes the TIM3 and respective GPIO
+  * @param	None
+  * @return	None
+  */
 void TIM3Init() {
 	//Enable bus clocks
 	LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOC);
@@ -35,6 +40,11 @@ void TIM3Init() {
 	LL_TIM_GenerateEvent_UPDATE(TIM3);
 }
 
+/**
+  * @brief	This function initializes the TIM4 and respective GPIO
+  * @param	None
+  * @return	None
+  */
 void TIM4Init() {
 	//Enable bus clocks
 	LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOB);
@@ -70,14 +80,20 @@ void TIM4Init() {
 	LL_TIM_GenerateEvent_UPDATE(TIM4);
 }
 
+/**
+  * @brief	This function initializes the TIM6
+  * @param	None
+  * @return	None
+  */
 void TIM6Init() {
 	//Enable bus clocks
 	LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM6);
 
 	//Configure the Timer
 //	LL_TIM_SetCounterMode(TIM6, LL_TIM_COUNTERMODE_UP);
-	LL_TIM_SetPrescaler(TIM6,  __LL_TIM_CALC_PSC(SystemCoreClock, 10000000));
-	LL_TIM_SetAutoReload(TIM6, __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM6), 2000000));	//Set output clock to 1MHz
+	LL_TIM_SetPrescaler(TIM6, 0);		//Leave timer at full clock speed
+	volatile uint16_t arr = __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM6), 2000000);		//Calculate ARR register value for clock to be 2MHz
+	LL_TIM_SetAutoReload(TIM6, arr);	//Set ARR value
 	LL_TIM_DisableARRPreload(TIM6);
 	LL_TIM_SetTriggerOutput(TIM6, LL_TIM_TRGO_UPDATE);
 	LL_TIM_DisableMasterSlaveMode(TIM6);
@@ -91,20 +107,31 @@ void TIM6Init() {
 	LL_TIM_EnableCounter(TIM6);
 }
 
+/**
+  * @brief	This function sets the output frequency of TIM3, sets the ARR and CCR values
+  * @param	freq: Desired timer frequency on PWM output
+  * @return	None
+  */
 void TIM3SetFreq(uint32_t freq) {
 	LL_TIM_SetAutoReload(TIM3, __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM3), freq));	//Set output clock to freq
 	LL_TIM_OC_SetCompareCH1(TIM3, ( (LL_TIM_GetAutoReload(TIM3) + 1 ) / 2)); 							//Set Output duty-cycle to 50%
 }
 
+/**
+  * @brief	This function sets the output frequency of TIM4, sets the ARR and CCR values
+  * @param	freq: Desired timer frequency on PWM output
+  * @return	None
+  */
 void TIM4SetFreq(uint32_t freq) {
 	LL_TIM_SetAutoReload(TIM4, __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM4), freq));	//Set output clock to freq
 	LL_TIM_OC_SetCompareCH1(TIM4, ( (LL_TIM_GetAutoReload(TIM4) + 1 ) / 2)); 							//Set Output duty-cycle to 50%
 }
 
-void TIM6_DAC_IRQHandler(void) {
-//	if(LL_TIM_IsActiveFlag_UPDATE(TIM6) == 0x01) {
-//		AnalogOutHandler(ANALOG_IN_BLOCK_A);
-//
-//		LL_TIM_ClearFlag_UPDATE(TIM6);
-//	}
+/**
+  * @brief	This function sets the output frequency of TIM6, sets the ARR value
+  * @param	freq: Desired timer frequency of TIM update calls
+  * @return	None
+  */
+void TIM6SetFreq(uint32_t freq) {
+	LL_TIM_SetAutoReload(TIM6, __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM6), freq));	//Set output clock to freq
 }

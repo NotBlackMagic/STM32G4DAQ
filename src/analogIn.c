@@ -13,7 +13,10 @@ uint8_t analogInBChSeqIndex;
 uint8_t analogInBCHSequencer[ANALOG_IN_SEQUENCER_LENGTH];
 
 /**
-  * @brief	This function initializes the Analog IN Channels
+  * @brief	This function initializes the Analog IN Channels:
+  * 		- Initialize structures
+  * 		- Initialize ADA4254 Amplifier
+  * 		- Calibrate ADC offset
   * @param	None
   * @return	None
   */
@@ -56,7 +59,7 @@ void AnalogInInit() {
 }
 
 /**
-  * @brief	This function calibrates the Analog In Block
+  * @brief	This function calibrates the Analog In Block, the ADC offset
   * @param	anBlocks: Which analog block, A or B
   * @return	None
   */
@@ -89,9 +92,9 @@ void AnalogInCalibration(uint8_t anBlock) {
 
 
 /**
-  * @brief	This function sets an Analog IN Channel
+  * @brief	This function sets an Analog IN Block
   * @param	anBlock: Which analog block, A or B
-  * @param	config: The set configuration for the analog block, AnalogInConfigStruct
+  * @param	config: The configuration for the analog IN block, AnalogInConfigStruct
   * @return	None
   */
 void AnalogInConfig(uint8_t anBlock, AnalogInConfigStruct config) {

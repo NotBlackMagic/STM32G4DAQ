@@ -3,6 +3,13 @@
 AnalogOutCHStruct analogOutAChannels[2];
 AnalogOutCHStruct analogOutBChannels[2];
 
+/**
+  * @brief	This function initializes the Analog OUT Channel:
+  * 		- Initialize structures
+  * 		- Initializes DAC DMA Channels
+  * @param	None
+  * @return	None
+  */
 void AnalogOutInit() {
 	//Enable bus clocks
 	LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMAMUX1);
@@ -42,71 +49,41 @@ void AnalogOutInit() {
 //	NVIC_EnableIRQ(DMA1_Channel3_IRQn);
 
 	//{2048, 2680, 3252, 3705, 3996, 4095, 3996, 3705, 3252, 2680, 2048, 1415, 844, 391, 100, 0, 100, 391, 844, 1415}
-	analogOutAChannels[0].buffer[0] = 2048;
-	analogOutAChannels[0].buffer[1] = 2680;
-	analogOutAChannels[0].buffer[2] = 3252;
-	analogOutAChannels[0].buffer[3] = 3705;
-	analogOutAChannels[0].buffer[4] = 3996;
-	analogOutAChannels[0].buffer[5] = 4095;
-	analogOutAChannels[0].buffer[6] = 3996;
-	analogOutAChannels[0].buffer[7] = 3705;
-	analogOutAChannels[0].buffer[8] = 3252;
-	analogOutAChannels[0].buffer[9] = 2680;
-	analogOutAChannels[0].buffer[10] = 2048;
-	analogOutAChannels[0].buffer[11] = 1415;
-	analogOutAChannels[0].buffer[12] = 844;
-	analogOutAChannels[0].buffer[13] = 391;
-	analogOutAChannels[0].buffer[14] = 100;
-	analogOutAChannels[0].buffer[15] = 0;
-	analogOutAChannels[0].buffer[16] = 100;
-	analogOutAChannels[0].buffer[17] = 391;
-	analogOutAChannels[0].buffer[18] = 844;
-	analogOutAChannels[0].buffer[19] = 1415;
-
-	analogOutAChannels[1].buffer[0] = 2048;
-	analogOutAChannels[1].buffer[1] = 2680;
-	analogOutAChannels[1].buffer[2] = 3252;
-	analogOutAChannels[1].buffer[3] = 3705;
-	analogOutAChannels[1].buffer[4] = 3996;
-	analogOutAChannels[1].buffer[5] = 4095;
-	analogOutAChannels[1].buffer[6] = 3996;
-	analogOutAChannels[1].buffer[7] = 3705;
-	analogOutAChannels[1].buffer[8] = 3252;
-	analogOutAChannels[1].buffer[9] = 2680;
-	analogOutAChannels[1].buffer[10] = 2048;
-	analogOutAChannels[1].buffer[11] = 1415;
-	analogOutAChannels[1].buffer[12] = 844;
-	analogOutAChannels[1].buffer[13] = 391;
-	analogOutAChannels[1].buffer[14] = 100;
-	analogOutAChannels[1].buffer[15] = 0;
-	analogOutAChannels[1].buffer[16] = 100;
-	analogOutAChannels[1].buffer[17] = 391;
-	analogOutAChannels[1].buffer[18] = 844;
-	analogOutAChannels[1].buffer[19] = 1415;
+	uint16_t i;
+	for(i = 0; i < 512; i++) {
+		analogOutAChannels[0].buffer[i] = 0;
+		analogOutAChannels[1].buffer[i] = 0;
+	}
 }
 
-void AnalogOutConfigChannel(uint8_t anBlock, uint8_t channel, AnalogOutCHConfigStruct config) {
+/**
+  * @brief	This function sets an Analog OUT Channel
+  * @param	anBlock: Which analog block, A or B
+  * @param	channel: Which channel to configure
+  * @param	config: The configuration for the analog OUT channel, AnalogOutCHStruct
+  * @return	None
+  */
+void AnalogOutConfigChannel(uint8_t anBlock, uint8_t channel, AnalogOutCHStruct config) {
 	if(anBlock == ANALOG_OUT_BLOCK_A) {
-		analogOutAChannels[channel - 1].config = config;
+		analogOutAChannels[channel - 1] = config;
 
-		if(analogOutAChannels[channel - 1].config.mode == Mode_DC) {
-			DAC1Write(channel, analogOutAChannels[channel - 1].config.offset);
+		if(channel == 0x01) {
+			//Change Timer settings, DAC update rate
+			TIM6SetFreq(analogOutAChannels[channel - 1].frequency);
+
+			//Change DMA Settings, buffer length
+			LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_1);
+			LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_1, analogOutAChannels[channel - 1].bufferLength);
+			LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_1);
+		}
+		else if(channel == 0x02) {
+			//Change DMA Settings, buffer length
+			LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_2);
+			LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_2, analogOutAChannels[channel - 1].bufferLength);
+			LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_2);
 		}
 	}
 	else if(anBlock == ANALOG_OUT_BLOCK_B) {
-		analogOutBChannels[channel - 1].config = config;
-	}
-}
-
-uint16_t value = 0;
-void AnalogOutHandler(uint8_t anBlock) {
-	if(anBlock == ANALOG_IN_BLOCK_A) {
-		LL_DAC_ConvertData12RightAligned(DAC1, LL_DAC_CHANNEL_1, value);
-		LL_DAC_ConvertData12RightAligned(DAC1, LL_DAC_CHANNEL_2, value);
-
-		value += 128;
-		if(value > 4095) {
-			value = 0;
-		}
+		analogOutBChannels[channel - 1] = config;
 	}
 }

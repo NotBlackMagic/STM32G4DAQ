@@ -36,12 +36,13 @@ typedef struct {
 
 typedef struct {
 	uint8_t channel;
-	AnalogOutCHConfigStruct config;
-	uint16_t buffer[20];
+	uint32_t frequency;
+	uint16_t buffer[512];
+	uint16_t bufferLength;
 } AnalogOutCHStruct;
 
 void AnalogOutInit();
-void AnalogOutConfigChannel(uint8_t anBlock, uint8_t channel, AnalogOutCHConfigStruct config);
+void AnalogOutConfigChannel(uint8_t anBlock, uint8_t channel, AnalogOutCHStruct config);
 void AnalogOutHandler(uint8_t anBlock);
 
 #ifdef __cplusplus

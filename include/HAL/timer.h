@@ -19,6 +19,7 @@ void TIM4Init();
 void TIM6Init();
 void TIM3SetFreq(uint32_t freq);
 void TIM4SetFreq(uint32_t freq);
+void TIM6SetFreq(uint32_t freq);
 
 #ifdef __cplusplus
 }
