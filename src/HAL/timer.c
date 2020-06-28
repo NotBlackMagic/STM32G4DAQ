@@ -21,7 +21,7 @@ void TIM3Init() {
 	//LL_TIM_SetCounterMode(TIM3, LL_TIM_COUNTERMODE_UP);
 	LL_TIM_SetPrescaler(TIM3, __LL_TIM_CALC_PSC(SystemCoreClock, 1000000));	//Set pre-scaler to have a clock of 1MHz
 	LL_TIM_EnableARRPreload(TIM3);	//Enable Auto-reload
-	LL_TIM_SetAutoReload(TIM3, __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM3), 125000));	//Set output clock to 125kHz
+	LL_TIM_SetAutoReload(TIM3, __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM3), 250000));	//Set output clock to 125kHz
 	LL_TIM_OC_SetMode(TIM3, LL_TIM_CHANNEL_CH1, LL_TIM_OCMODE_PWM1);	//Set output Mode
 	//LL_TIM_OC_SetPolarity(TIM3, LL_TIM_CHANNEL_CH1, LL_TIM_OCPOLARITY_HIGH);	//Set output polarity
 	LL_TIM_OC_SetCompareCH1(TIM3, ( (LL_TIM_GetAutoReload(TIM3) + 1 ) / 2)); //Set Output duty-cycle to 50%

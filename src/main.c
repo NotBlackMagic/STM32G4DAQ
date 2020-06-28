@@ -48,9 +48,9 @@ int main(void) {
 	uint32_t timestamp = 0;
 
 	uint8_t isVCPConnected = 0;
-	uint8_t txUSBData[512];
+	uint8_t txUSBData[550];
 	uint16_t txLength;
-	uint8_t rxUSBData[512];
+	uint8_t rxUSBData[550];
 	uint16_t rxLength;
 	while(1) {
 		//USB/AT Command Interpreter
@@ -78,6 +78,8 @@ int main(void) {
 				uint16_t dataLength = AnalogInGetData(1, channel, &txUSBData[4]);
 				if(dataLength != 0x00) {
 					txUSBData[txUSBDataIndex++] = OPCODE_TX_ANALOG_IN_A;	//Set Opcode
+
+					dataLength += 1;	//Add Channel indicator to payload length
 					txUSBData[txUSBDataIndex++] = (dataLength >> 8);		//Set Packet Length
 					txUSBData[txUSBDataIndex++] = (dataLength);				//Set Packet Length
 					txUSBData[txUSBDataIndex++] = channel;					//Set Analog In Channel

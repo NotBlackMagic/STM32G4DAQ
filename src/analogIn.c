@@ -47,7 +47,7 @@ void AnalogInInit() {
 	}
 
 	//Initialize sequencer
-	for(i = 0; i < 4; i++) {
+	for(i = 0; i < ANALOG_IN_SEQUENCER_LENGTH; i++) {
 		analogInACHSequencer[i] = 0;
 		analogInBCHSequencer[i] = 0;
 	}
@@ -116,7 +116,7 @@ void AnalogInConfig(uint8_t anBlock, AnalogInConfigStruct config) {
 
 		//Set Sample Rate
 		uint32_t sampleFreq = (250000 >> analogInA.config.rate);
-		TIM3SetFreq(sampleFreq);
+		TIM4SetFreq(sampleFreq);
 
 		//Set Scaling, ADA4254 output gain
 	}
@@ -179,19 +179,21 @@ uint16_t AnalogInGetData(uint8_t anBlock, uint8_t channel, uint8_t* data) {
 	uint16_t length = 0;
 	if(anBlock == ANALOG_IN_BLOCK_A) {
 		length = analogInAChannels[channel - 1].bufferIndex;
+		analogInAChannels[channel - 1].bufferIndex = 0;
+
 		uint16_t i;
 		for(i = 0; i < length; i++) {
 			data[i] = analogInAChannels[channel - 1].buffer[i];
 		}
-		analogInAChannels[channel - 1].bufferIndex -= length;
 	}
 	else if(anBlock == ANALOG_IN_BLOCK_B) {
 		length = analogInBChannels[channel - 1].bufferIndex;
+		analogInBChannels[channel - 1].bufferIndex = 0;
+
 		uint16_t i;
 		for(i = 0; i < length; i++) {
 			data[i] = analogInBChannels[channel - 1].buffer[i];
 		}
-		analogInBChannels[channel - 1].bufferIndex -= length;
 	}
 	return length;
 }
@@ -229,11 +231,14 @@ void AnalogInHandler(uint8_t anBlock) {
 			analogInAChSeqIndex = 0;
 		}
 
-		channel = analogInACHSequencer[analogInAChSeqIndex];
-		if(channel != 0x00) {
-			uint8_t gain = analogInAChannels[channel - 1].config.gain;
-			uint8_t reg = ((gain << 3) & IN_AMP_GAIN_MASK) + ((3 - (channel - 1)) & EXT_MUX_MASK);;
-			ADA4254WriteRegister(ANALOG_IN_BLOCK_A, GAIN_MUX, reg);
+		//Check if next channel in sequencer is different from current one, only switch MUX and Gain if different
+		if(analogInACHSequencer[analogInAChSeqIndex] != channel) {
+			channel = analogInACHSequencer[analogInAChSeqIndex];
+			if(channel != 0x00) {
+				uint8_t gain = analogInAChannels[channel - 1].config.gain;
+				uint8_t reg = ((gain << 3) & IN_AMP_GAIN_MASK) + ((3 - (channel - 1)) & EXT_MUX_MASK);;
+				ADA4254WriteRegister(ANALOG_IN_BLOCK_A, GAIN_MUX, reg);
+			}
 		}
 	}
 	else if(anBlock == ANALOG_IN_BLOCK_B) {
