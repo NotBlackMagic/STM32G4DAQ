@@ -1,6 +1,63 @@
 #include "timer.h"
 
 /**
+  * @brief	This function initializes the TIM1 and respective GPIO
+  * @param	None
+  * @return	None
+  */
+void TIM2Init() {
+	//Enable bus clocks
+	LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOA);
+	LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM2);
+
+	//Configure GPIO, TIM1 PWM Outputs
+	LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_9, LL_GPIO_MODE_ALTERNATE);
+	LL_GPIO_SetPinSpeed(GPIOA, LL_GPIO_PIN_9, LL_GPIO_SPEED_FREQ_HIGH);
+	LL_GPIO_SetPinOutputType(GPIOA, LL_GPIO_PIN_9, LL_GPIO_OUTPUT_PUSHPULL);
+	LL_GPIO_SetPinPull(GPIOA, LL_GPIO_PIN_9, LL_GPIO_PULL_NO);
+	LL_GPIO_SetAFPin_8_15(GPIOA, LL_GPIO_PIN_9, LL_GPIO_AF_10);
+
+	LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_10, LL_GPIO_MODE_ALTERNATE);
+	LL_GPIO_SetPinSpeed(GPIOA, LL_GPIO_PIN_10, LL_GPIO_SPEED_FREQ_HIGH);
+	LL_GPIO_SetPinOutputType(GPIOA, LL_GPIO_PIN_10, LL_GPIO_OUTPUT_PUSHPULL);
+	LL_GPIO_SetPinPull(GPIOA, LL_GPIO_PIN_10, LL_GPIO_PULL_NO);
+	LL_GPIO_SetAFPin_8_15(GPIOA, LL_GPIO_PIN_10, LL_GPIO_AF_10);
+
+	//Configure the Timer
+	//LL_TIM_SetCounterMode(TIM2, LL_TIM_COUNTERMODE_UP);
+	LL_TIM_SetPrescaler(TIM2, __LL_TIM_CALC_PSC(SystemCoreClock, 20000000));	//Set pre-scaler to have a clock of 10MHz
+	LL_TIM_EnableARRPreload(TIM2);	//Enable Auto-reload
+	LL_TIM_SetAutoReload(TIM2, __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM2), 1000000));	//Set output clock to 125kHz
+	LL_TIM_OC_SetMode(TIM2, LL_TIM_CHANNEL_CH3, LL_TIM_OCMODE_PWM1);	//Set output Mode
+	LL_TIM_OC_SetMode(TIM2, LL_TIM_CHANNEL_CH4, LL_TIM_OCMODE_PWM1);	//Set output Mode
+	//LL_TIM_OC_SetPolarity(TIM1, LL_TIM_CHANNEL_CH1, LL_TIM_OCPOLARITY_HIGH);	//Set output polarity
+	LL_TIM_OC_SetCompareCH3(TIM2, ( (LL_TIM_GetAutoReload(TIM2) + 1 ) / 2)); //Set Output duty-cycle to 50%
+	LL_TIM_OC_SetCompareCH4(TIM2, ( (LL_TIM_GetAutoReload(TIM2) + 1 ) / 2)); //Set Output duty-cycle to 50%
+	LL_TIM_OC_EnablePreload(TIM2, LL_TIM_CHANNEL_CH3);	//Enable Preload
+	LL_TIM_OC_EnablePreload(TIM2, LL_TIM_CHANNEL_CH4);	//Enable Preload
+	LL_TIM_DisableMasterSlaveMode(TIM2);
+
+	//Configure Interrupts
+//	NVIC_SetPriority(TIM2_IRQn, 0);
+//	NVIC_EnableIRQ(TIM2_IRQn);
+//	LL_TIM_EnableIT_CC1(TIM2);
+
+	//Enable Timer and Output
+	LL_TIM_CC_EnableChannel(TIM2, LL_TIM_CHANNEL_CH3);
+	LL_TIM_CC_EnableChannel(TIM2, LL_TIM_CHANNEL_CH4);
+	LL_TIM_EnableCounter(TIM2);
+	LL_TIM_GenerateEvent_UPDATE(TIM2);
+}
+
+void TIM2_IRQHandler(void) {
+	/* Check whether CC1 interrupt is pending */
+	if(LL_TIM_IsActiveFlag_CC1(TIM2) == 1) {
+		/* Clear the update interrupt flag*/
+		LL_TIM_ClearFlag_CC1(TIM2);
+	}
+}
+
+/**
   * @brief	This function initializes the TIM3 and respective GPIO
   * @param	None
   * @return	None
@@ -108,12 +165,49 @@ void TIM6Init() {
 }
 
 /**
+  * @brief	This function initializes the TIM8:
+  * 		- Timer clock source is ADA4254 Clock Output
+  * 		- Timer generates ADC1 Conversion Trigger
+  * @param	None
+  * @return	None
+  */
+void TIM8Init() {
+	//Enable bus clocks
+	LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOB);
+	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM8);
+
+	//Configure GPIO, TIM8 Input
+	LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_6, LL_GPIO_MODE_ALTERNATE);
+	LL_GPIO_SetPinSpeed(GPIOB, LL_GPIO_PIN_6, LL_GPIO_SPEED_FREQ_HIGH);
+	LL_GPIO_SetPinOutputType(GPIOB, LL_GPIO_PIN_6, LL_GPIO_OUTPUT_PUSHPULL);
+	LL_GPIO_SetPinPull(GPIOB, LL_GPIO_PIN_6, LL_GPIO_PULL_NO);
+	LL_GPIO_SetAFPin_0_7(GPIOB, LL_GPIO_PIN_6, LL_GPIO_AF_6);
+
+	//Configure the Timer
+//	LL_TIM_SetCounterMode(TIM8, LL_TIM_COUNTERMODE_UP);
+	LL_TIM_SetPrescaler(TIM8, 0);		//Leave timer at full clock speed
+	volatile uint8_t arr = __LL_TIM_CALC_ARR(1000000, LL_TIM_GetPrescaler(TIM8), 250000);
+	LL_TIM_SetAutoReload(TIM8, arr);	//Set output clock to frequency
+	LL_TIM_SetClockDivision(TIM8, LL_TIM_CLOCKDIVISION_DIV1);
+	LL_TIM_SetRepetitionCounter(TIM8, 0);
+	LL_TIM_EnableARRPreload(TIM8);
+	LL_TIM_ConfigETR(TIM8, LL_TIM_ETR_POLARITY_NONINVERTED, LL_TIM_ETR_PRESCALER_DIV1, LL_TIM_ETR_FILTER_FDIV1);
+	LL_TIM_SetClockSource(TIM8, LL_TIM_CLOCKSOURCE_EXT_MODE2);
+	LL_TIM_SetTriggerOutput(TIM8, LL_TIM_TRGO_CC1IF);
+	LL_TIM_SetTriggerOutput2(TIM8, LL_TIM_TRGO2_CC1F);
+	LL_TIM_DisableMasterSlaveMode(TIM8);
+
+	//Enable Timer
+	LL_TIM_EnableCounter(TIM8);
+}
+
+/**
   * @brief	This function sets the output frequency of TIM3, sets the ARR and CCR values
   * @param	freq: Desired timer frequency on PWM output
   * @return	None
   */
 void TIM3SetFreq(uint32_t freq) {
-	LL_TIM_SetAutoReload(TIM3, __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM3), freq));	//Set output clock to freq
+	LL_TIM_SetAutoReload(TIM3, __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM3), freq));	//Set output clock to frequency
 	LL_TIM_OC_SetCompareCH1(TIM3, ( (LL_TIM_GetAutoReload(TIM3) + 1 ) / 2)); 							//Set Output duty-cycle to 50%
 }
 
@@ -123,7 +217,7 @@ void TIM3SetFreq(uint32_t freq) {
   * @return	None
   */
 void TIM4SetFreq(uint32_t freq) {
-	LL_TIM_SetAutoReload(TIM4, __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM4), freq));	//Set output clock to freq
+	LL_TIM_SetAutoReload(TIM4, __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM4), freq));	//Set output clock to frequency
 	LL_TIM_OC_SetCompareCH1(TIM4, ( (LL_TIM_GetAutoReload(TIM4) + 1 ) / 2)); 							//Set Output duty-cycle to 50%
 }
 
@@ -133,5 +227,14 @@ void TIM4SetFreq(uint32_t freq) {
   * @return	None
   */
 void TIM6SetFreq(uint32_t freq) {
-	LL_TIM_SetAutoReload(TIM6, __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM6), freq));	//Set output clock to freq
+	LL_TIM_SetAutoReload(TIM6, __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM6), freq));	//Set output clock to frequency
+}
+
+/**
+  * @brief	This function sets the output frequency of TIM8, sets the ARR value
+  * @param	freq: Desired timer frequency of TIM update calls
+  * @return	None
+  */
+void TIM8SetFreq(uint32_t freq) {
+	LL_TIM_SetAutoReload(TIM8, __LL_TIM_CALC_ARR(1000000, LL_TIM_GetPrescaler(TIM8), freq));	//Set output clock to frequency
 }

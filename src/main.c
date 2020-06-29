@@ -26,8 +26,10 @@ int main(void) {
 	SPI3Init();		//SPI to Analog B Block
 	UART1Init();
 	SystemVrefEnable(VRef_2048);
-	TIM4Init();
+
+	TIM8Init();
 	ADC1Init();
+
 	TIM6Init();
 	DAC1Init();
 

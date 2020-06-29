@@ -13,7 +13,7 @@ void ADC1Init() {
 	LL_ADC_SetResolution(ADC1, LL_ADC_RESOLUTION_12B);					//Set ADC Base Resolution to 12bits
 	LL_ADC_SetDataAlignment(ADC1, LL_ADC_DATA_ALIGN_RIGHT);				//Align Data to the Right
 
-	LL_ADC_REG_SetTriggerSource(ADC1, LL_ADC_REG_TRIG_EXT_TIM4_TRGO);
+	LL_ADC_REG_SetTriggerSource(ADC1, LL_ADC_REG_TRIG_EXT_TIM8_TRGO);
 	LL_ADC_REG_SetTriggerEdge(ADC1, LL_ADC_REG_TRIG_EXT_RISING);
 
 	LL_ADC_REG_SetSequencerLength(ADC1, LL_ADC_REG_SEQ_SCAN_DISABLE);
