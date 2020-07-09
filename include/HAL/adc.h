@@ -12,10 +12,10 @@
 
 #include "analogIn.h"
 
-extern volatile uint16_t analogCH1;
-
 void ADC1Init();
+void ADC2Init();
 void ADC1Start();
+void ADC2Start();
 
 #ifdef __cplusplus
 }

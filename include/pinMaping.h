@@ -19,16 +19,29 @@ extern "C" {
 #define GPIO_OUT_DACB_CS					27		//Output DAC B CS
 #define GPIO_OUT_STATUS_LED					24		//Output Status LED
 
-//Flexible IO Pin Mapping
-#define GPIO_IO_GPIO0						9		//Flexible IO Pin 0
-#define GPIO_IO_GPIO1						10		//Flexible IO Pin 1
-#define GPIO_IO_GPIO2						26		//Flexible IO Pin 2
-#define GPIO_IO_GPIO3						18		//Flexible IO Pin 3
-#define GPIO_IO_GPIO4						35		//Flexible IO Pin 4
-#define GPIO_IO_GPIO5						32		//Flexible IO Pin 5
-#define GPIO_IO_GPIO6						47		//Flexible IO Pin 6
-#define GPIO_IO_GPIO7						46		//Flexible IO Pin 7
-#define GPIO_IO_GPIO8						39		//Flexible IO Pin 8
+//Flexible GPIO Pin Mapping
+#define GPIO_IO_GPIO0						9		//Flexible GPIO Pin 0
+#define GPIO_IO_GPIO1						10		//Flexible GPIO Pin 1
+#define GPIO_IO_GPIO2						26		//Flexible GPIO Pin 2
+#define GPIO_IO_GPIO3						18		//Flexible GPIO Pin 3
+#define GPIO_IO_GPIO4						35		//Flexible GPIO Pin 4
+#define GPIO_IO_GPIO5						32		//Flexible GPIO Pin 5
+#define GPIO_IO_GPIO6						47		//Flexible GPIO Pin 6
+#define GPIO_IO_GPIO7						46		//Flexible GPIO Pin 7
+#define GPIO_IO_GPIO8						39		//Flexible GPIO Pin 8
+
+//Flexible I2C IO Pin Mapping
+#define GPIO_IO_SCL							40		//Flexible I2C Pin SCL
+#define GPIO_IO_SDA							41		//Flexible I2C Pin SDA
+
+//Flexible SPI IO Pin Mapping
+#define GPIO_IO_SCK							29		//Flexible SPI Pin SCK
+#define GPIO_IO_MISO						30		//Flexible SPI Pin MISO
+#define GPIO_IO_MOSI						31		//Flexible SPI Pin MOSI
+
+//Flexible UART IO Pin Mapping
+#define GPIO_IO_TX							36		//Flexible UART Pin TX
+#define GPIO_IO_RX							37		//Flexible UART Pin RX
 
 //ADC Pin Mapping
 #define	GPIO_ADC_A_INP						0		//ADC A Input Positive

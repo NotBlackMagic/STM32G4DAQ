@@ -22,9 +22,7 @@ int main(void) {
 	GPIOInit();
 	USBVCPInit();
 	SPI1Init();		//SPI to Analog A Block
-	SPI2Init();		//SPI to External Interface
 	SPI3Init();		//SPI to Analog B Block
-	UART1Init();
 	SystemVrefEnable(VRef_2048);
 
 	TIM8Init();
@@ -32,6 +30,10 @@ int main(void) {
 
 	TIM6Init();
 	DAC1Init();
+
+	//Possible Init External peripheral interfaces
+//	SPI2Init();		//SPI to External Interface
+//	UART1Init();
 
 	//Start ADC Conversions
 	ADC1Start();
@@ -50,9 +52,9 @@ int main(void) {
 	uint32_t timestamp = 0;
 
 	uint8_t isVCPConnected = 0;
-	uint8_t txUSBData[550];
+	uint8_t txUSBData[1024];
 	uint16_t txLength;
-	uint8_t rxUSBData[550];
+	uint8_t rxUSBData[1024];
 	uint16_t rxLength;
 	while(1) {
 		//USB/AT Command Interpreter

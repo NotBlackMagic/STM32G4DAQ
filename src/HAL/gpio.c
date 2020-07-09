@@ -28,7 +28,7 @@ void GPIOInit() {
 	GPIOSetPinMode(GPIO_OUT_DACB_CS ,GPIO_Mode_Output);
 	GPIOSetPinMode(GPIO_OUT_STATUS_LED ,GPIO_Mode_Output);
 
-	//Set Flexible IO Pins to Input
+	//Set Flexible GPIO Pins to Input
 	GPIOSetPinMode(GPIO_IO_GPIO0, GPIO_Mode_Input);
 	GPIOSetPinMode(GPIO_IO_GPIO1, GPIO_Mode_Input);
 	GPIOSetPinMode(GPIO_IO_GPIO2, GPIO_Mode_Input);
@@ -38,6 +38,19 @@ void GPIOInit() {
 	GPIOSetPinMode(GPIO_IO_GPIO6, GPIO_Mode_Input);
 	GPIOSetPinMode(GPIO_IO_GPIO7, GPIO_Mode_Input);
 	GPIOSetPinMode(GPIO_IO_GPIO8, GPIO_Mode_Input);
+
+	//Set Flexible I2C IO Pins to Input
+	GPIOSetPinMode(GPIO_IO_SCL, GPIO_Mode_Input);
+	GPIOSetPinMode(GPIO_IO_SDA, GPIO_Mode_Input);
+
+	//Set Flexible SPI IO Pins to Input
+	GPIOSetPinMode(GPIO_IO_SCK, GPIO_Mode_Input);
+	GPIOSetPinMode(GPIO_IO_MISO, GPIO_Mode_Input);
+	GPIOSetPinMode(GPIO_IO_MOSI, GPIO_Mode_Input);
+
+	//Set Flexible UART IO Pins to Input
+	GPIOSetPinMode(GPIO_IO_TX, GPIO_Mode_Input);
+	GPIOSetPinMode(GPIO_IO_RX, GPIO_Mode_Input);
 
 	//Set ADC Input GPIO's
 	GPIOSetPinMode(GPIO_ADC_A_INP, GPIO_Mode_Analog);

@@ -55,7 +55,7 @@ void AnalogInInit() {
 	analogInBChSeqIndex = 0;
 
 	//Calibrate ADCs
-	AnalogInCalibration(ANALOG_IN_BLOCK_A);
+//	AnalogInCalibration(ANALOG_IN_BLOCK_A);
 }
 
 /**
@@ -115,8 +115,8 @@ void AnalogInConfig(uint8_t anBlock, AnalogInConfigStruct config) {
 		ADA4254WriteRegister(anBlock, INPUT_MUX, mode);
 
 		//Set Sample Rate
-		uint32_t sampleFreq = (250000 >> analogInA.config.rate);
-		TIM4SetFreq(sampleFreq);
+		uint32_t sampleFreq = (4 << analogInA.config.rate) - 1;
+		TIM8SetARR(sampleFreq);
 
 		//Set Scaling, ADA4254 output gain
 	}
@@ -218,28 +218,28 @@ void AnalogInHandler(uint8_t anBlock) {
 			analogInAChannels[channel - 1].buffer[analogInAChannels[channel - 1].bufferIndex] = (value >> 8);
 			analogInAChannels[channel - 1].buffer[analogInAChannels[channel - 1].bufferIndex + 1] = value;
 
-			//Get next conversion external channel
+			//Update Buffer index, buffer is circular
 			analogInAChannels[channel - 1].bufferIndex += 2;
 			if(analogInAChannels[channel - 1].bufferIndex >= 512) {
 				analogInAChannels[channel - 1].bufferIndex = 0;
 			}
 		}
 
-		//Set up next channel to be read, set ADA4254
+		//Set up next channel to be read: Set ADA4254
 		analogInAChSeqIndex += 1;
 		if(analogInAChSeqIndex >= ANALOG_IN_SEQUENCER_LENGTH) {
 			analogInAChSeqIndex = 0;
 		}
 
 		//Check if next channel in sequencer is different from current one, only switch MUX and Gain if different
-		if(analogInACHSequencer[analogInAChSeqIndex] != channel) {
+//		if(analogInACHSequencer[analogInAChSeqIndex] != channel) {
 			channel = analogInACHSequencer[analogInAChSeqIndex];
 			if(channel != 0x00) {
 				uint8_t gain = analogInAChannels[channel - 1].config.gain;
 				uint8_t reg = ((gain << 3) & IN_AMP_GAIN_MASK) + ((3 - (channel - 1)) & EXT_MUX_MASK);;
 				ADA4254WriteRegister(ANALOG_IN_BLOCK_A, GAIN_MUX, reg);
 			}
-		}
+//		}
 	}
 	else if(anBlock == ANALOG_IN_BLOCK_B) {
 
