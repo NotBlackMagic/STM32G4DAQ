@@ -3,6 +3,10 @@
 void ADA4254Init(uint8_t anBlock) {
 	uint8_t data;
 
+	//Reset ADA4254, clears all registers and initializes a full calibration
+	ADA4254WriteRegister(anBlock, RESET, RESET_MASK);
+	Delay(1000);
+
 	//Set the GPIO Functions
 	// -GPIO0/1 as Mux selector
 	// -GPIO2 as Mux Enable
@@ -17,10 +21,10 @@ void ADA4254Init(uint8_t anBlock) {
 	ADA4254WriteRegister(anBlock, ANALOG_ERR_DIS, data);
 
 	//Set Internal Mux connections: Set to IN1+ and IN1-
-	data = SW_A1_MASK + SW_B2_MASK;
+	data = SW_D12_MASK;	// SW_A1_MASK + SW_A2_MASK;
 	ADA4254WriteRegister(anBlock, INPUT_MUX, data);
 
-	//Set Input gain: 1/16; Output scaling: 1 V/V; External MUX: CH4 -> Channel 1
+	//Set Input gain: 1/8; Output scaling: 1 V/V; External MUX: CH4 -> Channel 1
 	data = ((Gain_1_8 << 3) & IN_AMP_GAIN_MASK) + (0x03 & EXT_MUX_MASK);
 	ADA4254WriteRegister(anBlock, GAIN_MUX, data);
 }
@@ -48,16 +52,20 @@ uint8_t ADA4254SetCurrent(uint8_t anBlock, CurrentSource source, CurrentValue va
 }
 
 void ADA4254WriteRegister(uint8_t anBlock, uint8_t reg, uint8_t data) {
-	uint16_t txData = ((reg | ADA4254_WRITE_MASK) << 8) + (data & 0xFF);
+	uint8_t txData[2];
+	txData[0] = (reg | ADA4254_WRITE_MASK);
+	txData[1] = (data & 0xFF);
 
 	if(anBlock == ANALOG_IN_BLOCK_A) {
 		GPIOWrite(GPIO_OUT_AMPA_CS, 0);
-		SPI1ReadWrite(txData);
+		uint16_t aux = (txData[0] << 8) + txData[1];
+		SPI1ReadWrite(aux);
 		GPIOWrite(GPIO_OUT_AMPA_CS, 1);
 	}
 	else if(anBlock == ANALOG_IN_BLOCK_B) {
 		GPIOWrite(GPIO_OUT_AMPB_CS, 0);
-		SPI3ReadWrite(txData);
+		uint16_t aux = (txData[0] << 8) + txData[1];
+		SPI3ReadWrite(aux);
 		GPIOWrite(GPIO_OUT_AMPB_CS, 1);
 	}
 }

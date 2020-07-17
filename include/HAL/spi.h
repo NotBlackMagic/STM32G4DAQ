@@ -12,6 +12,7 @@
 
 void SPI1Init();
 uint16_t SPI1ReadWrite(uint16_t txByte);
+void SPI1Write(uint8_t* data, uint8_t length);
 void SPI2Init();
 uint8_t SPI2ReadWrite(uint8_t txByte);
 void SPI3Init();

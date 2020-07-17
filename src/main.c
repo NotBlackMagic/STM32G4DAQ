@@ -78,8 +78,8 @@ int main(void) {
 		if(USBVCPTXStatus() == 0x00) {
 			uint16_t txUSBDataIndex = 0;
 			uint8_t channel = 1;
-			for(channel = 1; channel < 5; channel++) {
-				uint16_t dataLength = AnalogInGetData(1, channel, &txUSBData[4]);
+			for(channel = 1; channel < 9; channel++) {
+				uint16_t dataLength = AnalogInGetData(1, channel, &txUSBData[txUSBDataIndex + 4]);
 				if(dataLength != 0x00) {
 					txUSBData[txUSBDataIndex++] = OPCODE_TX_ANALOG_IN_A;	//Set Opcode
 

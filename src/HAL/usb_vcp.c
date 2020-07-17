@@ -27,7 +27,7 @@ uint8_t usbRXBuffer[USB_RX_BUFFER_LENGTH];		//Received data over USB are stored 
 uint8_t usbTXBuffer[USB_TX_BUFFER_LENGTH];		//Data to send over USB CDC are stored in this buffer
 
 //USB COM Port status variables
-uint8_t usbCOMPortOpen = 0;
+uint8_t usbCOMPortOpen;
 
 /**
   * @brief	This function initializes the USB VCP Peripheral
@@ -35,6 +35,9 @@ uint8_t usbCOMPortOpen = 0;
   * @return	USBD_OK if all operations are OK else USBD_FAIL
   */
 uint8_t USBVCPInit() {
+	//First set COM Port Open variable to "Closed"/0x00 state
+	usbCOMPortOpen = 0x00;
+
 	//Init Device Library, add supported class and start the library
 	if (USBD_Init(&hUsbDeviceFS, &CDC_Desc, DEVICE_FS) != USBD_OK) {
 		//Error_Handler();
@@ -73,11 +76,11 @@ uint8_t USBVCPTXStatus() {
   * @return	Returns 0 if no new data, 1 if new data
   */
 uint8_t USBVCPRead(uint8_t* data, uint16_t* length) {
-	//First check if COM Port is open
-	if(usbCOMPortOpen == 0) {
-		//COM Port not open, return error
-		return 0;
-	}
+//	//First check if COM Port is open
+//	if(usbCOMPortOpen == 0) {
+//		//COM Port not open, return error
+//		return 0;
+//	}
 
 	if(usbRXBufferFull == 1) {
 		uint16_t i;
@@ -212,14 +215,14 @@ static int8_t USBVCPControl(uint8_t cmd, uint8_t* pbuf, uint16_t length) {
 			lineCoding[5] = pbuf[5];
 			lineCoding[6] = pbuf[6];
 
-			uint32_t baudrate = lineCoding[0] + (lineCoding[1] << 8) + (lineCoding[2] << 16) + (lineCoding[3] << 24);
-
-			if(baudrate > 115200) {
-				usbCOMPortOpen = 1;
-			}
-			else {
-				usbCOMPortOpen = 0;
-			}
+//			uint32_t baudrate = lineCoding[0] + (lineCoding[1] << 8) + (lineCoding[2] << 16) + (lineCoding[3] << 24);
+//
+//			if(baudrate > 115200) {
+//				usbCOMPortOpen = 1;
+//			}
+//			else {
+//				usbCOMPortOpen = 0;
+//			}
 
 			break;
 		}
@@ -235,13 +238,13 @@ static int8_t USBVCPControl(uint8_t cmd, uint8_t* pbuf, uint16_t length) {
 			break;
 		}
 		case CDC_SET_CONTROL_LINE_STATE: {
-			USBD_SetupReqTypedef* req = (USBD_SetupReqTypedef*)pbuf;
-			if((req->wValue & 0x0001) != 0) {
-				usbCOMPortOpen = 1;
-			}
-			else {
+//			USBD_SetupReqTypedef* req = (USBD_SetupReqTypedef*)pbuf;
+//			if((req->wValue & 0x0001) != 0) {
+//				usbCOMPortOpen = 1;
+//			}
+//			else {
 //				usbCOMPortOpen = 0;
-			}
+//			}
 			break;
 		}
 		case CDC_SEND_BREAK: {

@@ -14,6 +14,7 @@
 #define USB_VCP_WRITE_TIMEOUT				1000
 
 extern USBD_CDC_ItfTypeDef USBD_Interface_fops_FS;
+extern uint8_t usbCOMPortOpen;
 
 uint8_t USBVCPInit();
 uint8_t USBVCPIsConnected();

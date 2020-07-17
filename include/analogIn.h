@@ -17,8 +17,7 @@
 typedef enum {
 	Mode_Off,
 	Mode_Differential,
-	Mode_Single_INP,
-	Mode_Single_INN
+	Mode_Single
 } AnalogInMode;
 
 typedef enum {
@@ -35,17 +34,6 @@ typedef enum {
 	Sample_0k24,
 	Sample_0k12
 } AnalogInSamplerate;
-
-typedef enum {
-	Divison_1,
-	Divison_2,
-	Divison_4,
-	Divison_8,
-	Divison_16,
-	Divison_32,
-	Divison_64,
-	Divison_128
-} AnalogInRateDivision;
 
 typedef enum {
 	Resolution_8Bit,
@@ -66,7 +54,6 @@ typedef enum {
 } AnalogInScale;
 
 typedef struct {
-	AnalogInMode mode;
 	AnalogInSamplerate rate;
 	AnalogInScale scale;
 } AnalogInConfigStruct;
@@ -77,8 +64,8 @@ typedef struct {
 } AnalogInStruct;
 
 typedef struct {
-	uint8_t enabled;
-	AnalogInRateDivision division;
+	AnalogInMode mode;
+	uint8_t division;
 	AnalogInResolution resolution;
 	InputGain gain;
 } AnalogInCHConfigStruct;
@@ -87,7 +74,8 @@ typedef struct {
 	uint8_t channel;
 	AnalogInCHConfigStruct config;
 	uint8_t buffer[512];
-	uint16_t bufferIndex;
+	uint16_t bufferReadIndex;
+	uint16_t bufferWriteIndex;
 } AnalogInCHStruct;
 
 void AnalogInInit();
