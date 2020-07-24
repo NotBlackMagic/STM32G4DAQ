@@ -60,6 +60,21 @@ uint8_t CommandInterpreter(uint8_t* data, uint16_t dataLength) {
 			AnalogOutConfigChannel(ANALOG_OUT_BLOCK_A, config.channel, config);
 			break;
 		}
+		case OPCODE_SET_ANALOG_OUT_B_CH: {
+			AnalogOutCHStruct config;
+
+			config.channel = data[COMMAND_PAYLOAD_OFFSET+0];
+			config.frequency = (data[COMMAND_PAYLOAD_OFFSET+1] << 16) + (data[COMMAND_PAYLOAD_OFFSET+2] << 8) + data[COMMAND_PAYLOAD_OFFSET+3];
+			config.bufferLength = (data[COMMAND_PAYLOAD_OFFSET+4] << 8) + data[COMMAND_PAYLOAD_OFFSET+5];
+
+			uint16_t i;
+			for(i = 0; i < config.bufferLength; i++) {
+				config.buffer[i] = (data[(COMMAND_PAYLOAD_OFFSET+6) + (i*2)] << 8) + data[(COMMAND_PAYLOAD_OFFSET+6) + (i*2 + 1)];
+			}
+
+			AnalogOutConfigChannel(ANALOG_OUT_BLOCK_B, config.channel, config);
+			break;
+		}
 		default:
 			return 1;
 			break;

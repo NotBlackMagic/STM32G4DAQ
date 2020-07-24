@@ -57,10 +57,8 @@ void ADA4254WriteRegister(uint8_t anBlock, uint8_t reg, uint8_t data) {
 	txData[1] = (data & 0xFF);
 
 	if(anBlock == ANALOG_IN_BLOCK_A) {
-		GPIOWrite(GPIO_OUT_AMPA_CS, 0);
-		uint16_t aux = (txData[0] << 8) + txData[1];
-		SPI1ReadWrite(aux);
-		GPIOWrite(GPIO_OUT_AMPA_CS, 1);
+		SPI1Write(txData, 2);
+//		GPIOWrite(GPIO_OUT_AMPA_CS, 1);
 	}
 	else if(anBlock == ANALOG_IN_BLOCK_B) {
 		GPIOWrite(GPIO_OUT_AMPB_CS, 0);

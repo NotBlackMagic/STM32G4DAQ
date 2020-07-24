@@ -210,6 +210,33 @@ void TIM6Init() {
 }
 
 /**
+  * @brief	This function initializes the TIM7
+  * @param	None
+  * @return	None
+  */
+void TIM7Init() {
+	//Enable bus clocks
+	LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM7);
+
+	//Configure the Timer
+//	LL_TIM_SetCounterMode(TIM7, LL_TIM_COUNTERMODE_UP);
+	LL_TIM_SetPrescaler(TIM7, 0);		//Leave timer at full clock speed
+	volatile uint16_t arr = __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM7), 2000000);		//Calculate ARR register value for clock to be 2MHz
+	LL_TIM_SetAutoReload(TIM7, arr);	//Set ARR value
+	LL_TIM_DisableARRPreload(TIM7);
+	LL_TIM_SetTriggerOutput(TIM7, LL_TIM_TRGO_UPDATE);
+	LL_TIM_DisableMasterSlaveMode(TIM7);
+
+	//Configure Interrupts
+//	NVIC_SetPriority(TIM7_DAC_IRQn, 0);
+//	NVIC_EnableIRQ(TIM7_DAC_IRQn);
+//	LL_TIM_EnableIT_UPDATE(TIM7);
+
+	//Enable Timer
+	LL_TIM_EnableCounter(TIM7);
+}
+
+/**
   * @brief	This function initializes the TIM8:
   * 		- Timer clock source is ADA4254 Clock Output
   * 		- Timer generates ADC1 Conversion Trigger
@@ -272,6 +299,15 @@ void TIM4SetFreq(uint32_t freq) {
   */
 void TIM6SetFreq(uint32_t freq) {
 	LL_TIM_SetAutoReload(TIM6, __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM6), freq));	//Set output clock to frequency
+}
+
+/**
+  * @brief	This function sets the output frequency of TIM7, sets the ARR value
+  * @param	freq: Desired timer frequency of TIM update calls
+  * @return	None
+  */
+void TIM7SetFreq(uint32_t freq) {
+	LL_TIM_SetAutoReload(TIM7, __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM7), freq));	//Set output clock to frequency
 }
 
 /**

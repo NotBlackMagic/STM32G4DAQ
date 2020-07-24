@@ -11,7 +11,9 @@
 #include "stm32g4xx_ll_gpio.h"
 
 void DAC1Init();
+void DAC4Init();
 void DAC1Write(uint8_t channel, uint16_t value);
+void DAC4Write(uint8_t channel, uint16_t value);
 
 #ifdef __cplusplus
 }

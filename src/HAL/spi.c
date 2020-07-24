@@ -1,10 +1,7 @@
 #include "spi.h"
 
+#include "gpio.h"
 #include "pinMaping.h"
-
-uint8_t spi1TXBuffer[100];
-uint8_t spi1TXBufferIndex;
-uint8_t spi1TXBufferLength;
 
 /**
   * @brief	This function initializes the SPI1 interface, also sets the respective GPIO pins
@@ -44,16 +41,16 @@ void SPI1Init() {
 	LL_SPI_SetDataWidth(SPI1, LL_SPI_DATAWIDTH_16BIT);
 	LL_SPI_SetNSSMode(SPI1, LL_SPI_NSS_SOFT);
 	LL_SPI_SetMode(SPI1, LL_SPI_MODE_MASTER);
-	LL_SPI_SetRxFIFOThreshold(SPI1, LL_SPI_RX_FIFO_TH_QUARTER);
+	LL_SPI_SetRxFIFOThreshold(SPI1, LL_SPI_RX_FIFO_TH_HALF);
 //	LL_SPI_DisableCRC(SPI1);
 //	LL_SPI_SetStandard(SPI1, LL_SPI_PROTOCOL_MOTOROLA);
 //	LL_SPI_DisableNSSPulseMgt(SPI1);
 
 	//Configure SPI Interrupts
-//	NVIC_SetPriority(SPI1_IRQn, 0);		// NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 1, 0)
-//	NVIC_EnableIRQ(SPI1_IRQn);
+	NVIC_SetPriority(SPI1_IRQn, 0);		// NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 1, 0)
+	NVIC_EnableIRQ(SPI1_IRQn);
 //	LL_SPI_EnableIT_TXE(SPI1);
-//	LL_SPI_EnableIT_RXNE(SPI1);
+	LL_SPI_EnableIT_RXNE(SPI1);
 //	LL_SPI_EnableIT_ERR(SPI1);
 
 	//Enable SPI
@@ -161,37 +158,33 @@ uint16_t SPI1ReadWrite(uint16_t txByte) {
 }
 
 void SPI1Write(uint8_t* data, uint8_t length) {
-	while(spi1TXBufferIndex != 0x00);
+	uint16_t txByte = (data[0] << 8) + data[1];
 
-	spi1TXBufferLength = length;
-	uint8_t i;
-	for(i = 0; i < length; i++) {
-		spi1TXBuffer[i] = data[i];
-	}
-	spi1TXBufferIndex = 0;
-
-	//Set CS low and start transmission, CS high is done in the IRQHandler
+	while(LL_GPIO_IsOutputPinSet(GPIOB, LL_GPIO_PIN_7) == 0x00);
 	GPIOWrite(GPIO_OUT_AMPA_CS, 0);
-	LL_SPI_TransmitData8(SPI1, spi1TXBuffer[spi1TXBufferIndex++]);
-	LL_SPI_EnableIT_TXE(SPI1);
+
+	while(LL_SPI_IsActiveFlag_BSY(SPI1));
+	LL_SPI_TransmitData16(SPI1, txByte);
 }
 
 void SPI1_IRQHandler(void) {
 	if(LL_SPI_IsActiveFlag_TXE(SPI1)) {
-		if(spi1TXBufferIndex < spi1TXBufferLength) {
-			LL_SPI_TransmitData8(SPI1, spi1TXBuffer[spi1TXBufferIndex++]);
-		}
-		else {
-			spi1TXBufferIndex = 0;
-			spi1TXBufferLength = 0;
-
-			//Set CS High and disable TXE interrupt
-			GPIOWrite(GPIO_OUT_AMPA_CS, 1);
-			LL_SPI_DisableIT_TXE(SPI1);
-		}
+//		if(spi1TXBufferIndex < spi1TXBufferLength) {
+//			LL_SPI_TransmitData8(SPI1, spi1TXBuffer[spi1TXBufferIndex++]);
+//		}
+//		else {
+//			spi1TXBufferIndex = 0;
+//			spi1TXBufferLength = 0;
+//
+//			//Set CS High and disable TXE interrupt
+//			GPIOWrite(GPIO_OUT_AMPA_CS, 1);
+//			LL_SPI_DisableIT_TXE(SPI1);
+//		}
 	}
 	if(LL_SPI_IsActiveFlag_RXNE(SPI1)) {
-		uint8_t rx = LL_SPI_ReceiveData8(SPI1);
+		uint16_t rx = LL_SPI_ReceiveData16(SPI1);
+
+		GPIOWrite(GPIO_OUT_AMPA_CS, 1);
 	}
 	if(LL_SPI_IsActiveFlag_OVR(SPI1)) {
 

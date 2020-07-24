@@ -18,10 +18,12 @@ void TIM2Init();
 void TIM3Init();
 void TIM4Init();
 void TIM6Init();
+void TIM7Init();
 void TIM8Init();
 void TIM3SetFreq(uint32_t freq);
 void TIM4SetFreq(uint32_t freq);
 void TIM6SetFreq(uint32_t freq);
+void TIM7SetFreq(uint32_t freq);
 void TIM8SetFreq(uint32_t freq);
 void TIM8SetARR(uint16_t arr);
 

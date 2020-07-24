@@ -1,6 +1,7 @@
 #include "adc.h"
 #include "dac.h"
 #include "gpio.h"
+#include "opamp.h"
 #include "rcc.h"
 #include "spi.h"
 #include "system.h"
@@ -21,26 +22,51 @@ int main(void) {
 	//Initialize all configured peripherals
 	GPIOInit();
 	USBVCPInit();
-	SPI1Init();		//SPI to Analog A Block
-	SPI3Init();		//SPI to Analog B Block
 	SystemVrefEnable(VRef_2048);
 
+	//------------------------------------------//
+	//			Init Analog Block A				//
+	//------------------------------------------//
+	//Init SPI for Analog A Block
+	SPI1Init();
+
+	//Init ADC and ADC trigger Timer
 	TIM8Init();
 	ADC1Init();
 
+	//Init DAC and DAC trigger Timer
 	TIM6Init();
 	DAC1Init();
+
+	//Start ADC Conversions
+	ADC1Start();
+	//------------------------------------------//
+
+	//------------------------------------------//
+	//			Init Analog Block B				//
+	//------------------------------------------//
+	//Init SPI for Analog B Block
+	SPI3Init();
+
+	//Init ADC and ADC trigger Timer
+
+	//Init DAC and DAC trigger Timer
+	TIM7Init();
+	DAC4Init();
+	OpAmp4Init();
+	OpAmp5Init();
+
+	//Start ADC Conversions
+
+	//Set DAC to 0V, "Idle" voltage
+	DAC4Write(1, 2048);
+	DAC4Write(2, 2048);
+
+	//------------------------------------------//
 
 	//Possible Init External peripheral interfaces
 //	SPI2Init();		//SPI to External Interface
 //	UART1Init();
-
-	//Start ADC Conversions
-	ADC1Start();
-
-	//Set DAC to something
-	DAC1Write(1, 2048);
-	DAC1Write(2, 1024);
 
 	//Give time for all to init, ADA4254 auto-calibration for example
 	Delay(1000);
