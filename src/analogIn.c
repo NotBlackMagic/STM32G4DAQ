@@ -104,7 +104,11 @@ void AnalogInConfig(uint8_t anBlock, AnalogInConfigStruct config) {
 		analogInA.config = config;
 
 		//Set Sample Rate
-		uint32_t sampleFreq = (4 << analogInA.config.rate) - 1;
+//		uint32_t sampleFreq = (4 << analogInA.config.rate) - 1;
+		uint32_t sampleFreq = (1 << analogInA.config.rate) - 1;
+		if(sampleFreq < 1) {
+			return;
+		}
 		TIM8SetARR(sampleFreq);
 
 		//Set Scaling, ADA4254 output gain
@@ -181,12 +185,44 @@ void AnalogInHandler(uint8_t anBlock) {
 	if(anBlock == ANALOG_IN_BLOCK_A) {
 		GPIOWrite(GPIO_IO_GPIO0, 1);
 
-		uint8_t channel = analogInACHSequencer[analogInAChSeqIndex];
-		//Check if have channel to read and read it to buffer
-		if(channel != 0x00) {
-			//Read ADC to analog channel buffer
-			uint16_t value = LL_ADC_REG_ReadConversionData32(ADC1);
 
+		//Read ADC to temp variable and get respective channel number
+		uint16_t value = LL_ADC_REG_ReadConversionData32(ADC1);
+		uint8_t channel = analogInACHSequencer[analogInAChSeqIndex];
+
+		//Set up next channel to be read: Set ADA4254
+		//This has to be done before read ADC value processing so that SPI is starting/busy faster
+		analogInAChSeqIndex += 1;
+		if(analogInAChSeqIndex >= ANALOG_IN_SEQUENCER_LENGTH || analogInACHSequencer[analogInAChSeqIndex] == 0x00) {
+			analogInAChSeqIndex = 0;
+		}
+
+		uint8_t nextChannel = analogInACHSequencer[analogInAChSeqIndex];
+		if(nextChannel != 0x00) {
+			uint8_t reg = 0;
+
+			//First switch the internal MUX, this is slower so it has to be done first to have more time to stabilize
+			if(analogInAChannels[nextChannel - 1].config.mode == Mode_Differential) {
+				reg = SW_A1_MASK + SW_A2_MASK;
+			}
+			else if(analogInAChannels[nextChannel - 1].config.mode == Mode_Single) {
+				if((nextChannel % 2) == 0x01) {
+					reg = SW_A1_MASK + SW_B2_MASK;
+				}
+				else {
+					reg = SW_B1_MASK + SW_B2_MASK;
+				}
+			}
+			ADA4254WriteRegister(ANALOG_IN_BLOCK_A, INPUT_MUX, reg);
+
+			uint8_t extMux = 3 - ((nextChannel - 1) >> 1);
+			uint8_t gain = analogInAChannels[nextChannel - 1].config.gain;
+			reg = ((gain << 3) & IN_AMP_GAIN_MASK) + (extMux & EXT_MUX_MASK);
+			ADA4254WriteRegister(ANALOG_IN_BLOCK_A, GAIN_MUX, reg);
+		}
+
+		//Check if read ADC value is from a channel and read it to buffer if yes
+		if(channel != 0x00) {
 			//Apply calibration offset
 			value += analogInA.offsetCall;
 
@@ -199,34 +235,6 @@ void AnalogInHandler(uint8_t anBlock) {
 			if(analogInAChannels[channel - 1].bufferWriteIndex >= 512) {
 				analogInAChannels[channel - 1].bufferWriteIndex = 0;
 			}
-		}
-
-		//Set up next channel to be read: Set ADA4254
-		analogInAChSeqIndex += 1;
-		if(analogInAChSeqIndex >= ANALOG_IN_SEQUENCER_LENGTH || analogInACHSequencer[analogInAChSeqIndex] == 0x00) {
-			analogInAChSeqIndex = 0;
-		}
-
-		channel = analogInACHSequencer[analogInAChSeqIndex];
-		if(channel != 0x00) {
-			uint8_t extMux = 3 - ((channel - 1) >> 1);
-
-			uint8_t gain = analogInAChannels[channel - 1].config.gain;
-			uint8_t reg = ((gain << 3) & IN_AMP_GAIN_MASK) + (extMux & EXT_MUX_MASK);
-			ADA4254WriteRegister(ANALOG_IN_BLOCK_A, GAIN_MUX, reg);
-
-			if(analogInAChannels[channel - 1].config.mode == Mode_Differential) {
-				reg = SW_A1_MASK + SW_A2_MASK;
-			}
-			else if(analogInAChannels[channel - 1].config.mode == Mode_Single) {
-				if((channel % 2) == 0x01) {
-					reg = SW_A1_MASK + SW_B2_MASK;
-				}
-				else {
-					reg = SW_B1_MASK + SW_B2_MASK;
-				}
-			}
-			ADA4254WriteRegister(ANALOG_IN_BLOCK_A, INPUT_MUX, reg);
 		}
 
 		GPIOWrite(GPIO_IO_GPIO0, 0);

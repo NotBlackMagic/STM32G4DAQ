@@ -13,7 +13,7 @@ void ADA4254Init(uint8_t anBlock) {
 	// -GPIO4 CLK input (1 MHz)
  	ADA4254WriteRegister(anBlock, GPIO_DIR, 0x17);	//Set GPIO Directions
 	ADA4254WriteRegister(anBlock, SF_CFG, 0x23);	//Set GPIO Special Functions
-//	ADA4254WriteRegister(anBlock, SYNC_CFG, CLK_OUT_SEL_MASK);	//Set Input Clock division
+	ADA4254WriteRegister(anBlock, SYNC_CFG, CLK_OUT_SEL_MASK);	//Set Input Clock division
 	ADA4254WriteRegister(anBlock, GPIO_DATA, 0x04);	//Set GPIO Output Values
 
 	//Disable Input Multiplexer Protection, allow IN1 and IN2 mixing

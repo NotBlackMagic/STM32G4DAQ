@@ -24,7 +24,7 @@ void ADC1Init() {
 	LL_ADC_SetGainCompensation(ADC1, 0x00);
 	LL_ADC_SetOverSamplingScope(ADC1, LL_ADC_OVS_DISABLE);
 //	LL_ADC_SetOverSamplingScope(ADC1, LL_ADC_OVS_GRP_REGULAR_CONTINUED);
-//	LL_ADC_ConfigOverSamplingRatioShift(ADC1, LL_ADC_OVS_RATIO_4, LL_ADC_OVS_SHIFT_RIGHT_2);
+//	LL_ADC_ConfigOverSamplingRatioShift(ADC1, LL_ADC_OVS_RATIO_8, LL_ADC_OVS_SHIFT_RIGHT_3);
 //	LL_ADC_SetOverSamplingDiscont(ADC1, LL_ADC_OVS_REG_CONT);
 	LL_ADC_DisableDeepPowerDown(ADC1);
 	LL_ADC_EnableInternalRegulator(ADC1);

@@ -253,20 +253,24 @@ void TIM8Init() {
 	LL_GPIO_SetPinSpeed(GPIOB, LL_GPIO_PIN_6, LL_GPIO_SPEED_FREQ_HIGH);
 	LL_GPIO_SetPinOutputType(GPIOB, LL_GPIO_PIN_6, LL_GPIO_OUTPUT_PUSHPULL);
 	LL_GPIO_SetPinPull(GPIOB, LL_GPIO_PIN_6, LL_GPIO_PULL_NO);
-	LL_GPIO_SetAFPin_0_7(GPIOB, LL_GPIO_PIN_6, LL_GPIO_AF_6);
+	LL_GPIO_SetAFPin_0_7(GPIOB, LL_GPIO_PIN_6, LL_GPIO_AF_5);
 
 	//Configure the Timer
 //	LL_TIM_SetCounterMode(TIM8, LL_TIM_COUNTERMODE_UP);
 	LL_TIM_SetPrescaler(TIM8, 0);		//Leave timer at full clock speed
-	LL_TIM_SetAutoReload(TIM8, __LL_TIM_CALC_ARR(1000000, LL_TIM_GetPrescaler(TIM8), 125000));	//Set output clock to frequency
+	LL_TIM_SetAutoReload(TIM8, 1);		//Set output clock to frequency
 	LL_TIM_SetClockDivision(TIM8, LL_TIM_CLOCKDIVISION_DIV1);
 	LL_TIM_SetRepetitionCounter(TIM8, 0);
 	LL_TIM_EnableARRPreload(TIM8);
-	LL_TIM_ConfigETR(TIM8, LL_TIM_ETR_POLARITY_NONINVERTED, LL_TIM_ETR_PRESCALER_DIV1, LL_TIM_ETR_FILTER_FDIV1);
-	LL_TIM_SetClockSource(TIM8, LL_TIM_CLOCKSOURCE_EXT_MODE2);
+	LL_TIM_SetTriggerInput(TIM8, LL_TIM_TS_TI1FP1);
+//	LL_TIM_ConfigETR(TIM8, LL_TIM_ETR_POLARITY_NONINVERTED, LL_TIM_ETR_PRESCALER_DIV1, LL_TIM_ETR_FILTER_FDIV1);
+	LL_TIM_SetClockSource(TIM8, LL_TIM_CLOCKSOURCE_EXT_MODE1);
+	LL_TIM_IC_SetFilter(TIM8, LL_TIM_CHANNEL_CH1, LL_TIM_IC_FILTER_FDIV1);
+	LL_TIM_IC_SetPolarity(TIM8, LL_TIM_CHANNEL_CH1, LL_TIM_IC_POLARITY_BOTHEDGE);
 	LL_TIM_SetTriggerOutput(TIM8, LL_TIM_TRGO_CC1IF);
 	LL_TIM_SetTriggerOutput2(TIM8, LL_TIM_TRGO2_CC1F);
 	LL_TIM_DisableMasterSlaveMode(TIM8);
+//	LL_TIM_ConfigBRK(TIM8, LL_TIM_BREAK_POLARITY_LOW, LL_TIM_BREAK_FILTER_FDIV1, LL_TIM_BREAK_AFMODE_INPUT);
 
 	//Enable Timer
 	LL_TIM_EnableCounter(TIM8);
@@ -315,9 +319,9 @@ void TIM7SetFreq(uint32_t freq) {
   * @param	freq: Desired timer frequency of TIM update calls
   * @return	None
   */
-void TIM8SetFreq(uint32_t freq) {
-	LL_TIM_SetAutoReload(TIM8, __LL_TIM_CALC_ARR(1000000, LL_TIM_GetPrescaler(TIM8), freq));	//Set output clock to frequency
-}
+//void TIM8SetFreq(uint32_t freq) {
+//	LL_TIM_SetAutoReload(TIM8, __LL_TIM_CALC_ARR(1000000, LL_TIM_GetPrescaler(TIM8), freq));	//Set output clock to frequency
+//}
 
 /**
   * @brief	This function sets the ARR value
