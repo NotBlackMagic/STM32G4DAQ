@@ -41,7 +41,7 @@ void ADC1Init() {
 	while(LL_ADC_IsCalibrationOnGoing(ADC1) != 0);
 
 	//Configure Interrupts
-	NVIC_SetPriority(ADC1_2_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 2, 0));		//NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 2, 0)
+	NVIC_SetPriority(ADC1_2_IRQn, 0);		//NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 2, 0)
 	NVIC_EnableIRQ(ADC1_2_IRQn);
 	LL_ADC_EnableIT_EOC(ADC1);
 

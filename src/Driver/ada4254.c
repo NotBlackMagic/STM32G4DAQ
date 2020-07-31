@@ -11,7 +11,7 @@ void ADA4254Init(uint8_t anBlock) {
 	// -GPIO0/1 as Mux selector
 	// -GPIO2 as Mux Enable
 	// -GPIO4 CLK input (1 MHz)
-	ADA4254WriteRegister(anBlock, GPIO_DIR, 0x17);	//Set GPIO Directions
+ 	ADA4254WriteRegister(anBlock, GPIO_DIR, 0x17);	//Set GPIO Directions
 	ADA4254WriteRegister(anBlock, SF_CFG, 0x23);	//Set GPIO Special Functions
 //	ADA4254WriteRegister(anBlock, SYNC_CFG, CLK_OUT_SEL_MASK);	//Set Input Clock division
 	ADA4254WriteRegister(anBlock, GPIO_DATA, 0x04);	//Set GPIO Output Values
@@ -52,18 +52,14 @@ uint8_t ADA4254SetCurrent(uint8_t anBlock, CurrentSource source, CurrentValue va
 }
 
 void ADA4254WriteRegister(uint8_t anBlock, uint8_t reg, uint8_t data) {
-	uint8_t txData[2];
-	txData[0] = (reg | ADA4254_WRITE_MASK);
-	txData[1] = (data & 0xFF);
+	uint16_t txData = ((reg | ADA4254_WRITE_MASK) << 8) + (data & 0xFF);
 
 	if(anBlock == ANALOG_IN_BLOCK_A) {
-		SPI1Write(txData, 2);
-//		GPIOWrite(GPIO_OUT_AMPA_CS, 1);
+		SPI1Write(&txData, 1);
 	}
 	else if(anBlock == ANALOG_IN_BLOCK_B) {
 		GPIOWrite(GPIO_OUT_AMPB_CS, 0);
-		uint16_t aux = (txData[0] << 8) + txData[1];
-		SPI3ReadWrite(aux);
+		SPI3ReadWrite(txData);
 		GPIOWrite(GPIO_OUT_AMPB_CS, 1);
 	}
 }

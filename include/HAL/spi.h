@@ -11,12 +11,14 @@
 #include "stm32g4xx_ll_spi.h"
 
 void SPI1Init();
-uint16_t SPI1ReadWrite(uint16_t txByte);
-void SPI1Write(uint8_t* data, uint8_t length);
 void SPI2Init();
-uint8_t SPI2ReadWrite(uint8_t txByte);
 void SPI3Init();
+
+uint16_t SPI1ReadWrite(uint16_t txByte);
+uint8_t SPI2ReadWrite(uint8_t txByte);
 uint8_t SPI3ReadWrite(uint8_t txByte);
+
+uint8_t SPI1Write(uint16_t* data, uint8_t length);
 
 #ifdef __cplusplus
 }

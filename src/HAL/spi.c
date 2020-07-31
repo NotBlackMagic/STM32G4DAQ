@@ -3,6 +3,12 @@
 #include "gpio.h"
 #include "pinMaping.h"
 
+#define SPI_TX_BUFFER_SIZE						128
+
+uint16_t spi1TXBufferIndex;
+uint16_t spi1TXBufferLength;
+uint16_t spi1TXBuffer[SPI_TX_BUFFER_SIZE];
+
 /**
   * @brief	This function initializes the SPI1 interface, also sets the respective GPIO pins
   * @param	None
@@ -157,14 +163,26 @@ uint16_t SPI1ReadWrite(uint16_t txByte) {
 	return rxByte;
 }
 
-void SPI1Write(uint8_t* data, uint8_t length) {
-	uint16_t txByte = (data[0] << 8) + data[1];
+uint8_t SPI1Write(uint16_t* data, uint8_t length) {
+	//Check of space in the TX Buffer
+	if((spi1TXBufferLength + length) > SPI_TX_BUFFER_SIZE) {
+		//No space in TX buffer
+		return 1;
+	}
 
-	while(LL_GPIO_IsOutputPinSet(GPIOB, LL_GPIO_PIN_7) == 0x00);
-	GPIOWrite(GPIO_OUT_AMPA_CS, 0);
+	uint8_t i;
+	for(i = 0; i < length; i++) {
+		spi1TXBuffer[spi1TXBufferLength++] = data[i];
+	}
 
-	while(LL_SPI_IsActiveFlag_BSY(SPI1));
-	LL_SPI_TransmitData16(SPI1, txByte);
+	if(spi1TXBufferIndex == 0) {
+		//Set CS
+		GPIOWrite(GPIO_OUT_AMPA_CS, 0);
+
+		LL_SPI_TransmitData16(SPI1, spi1TXBuffer[spi1TXBufferIndex++]);
+	}
+
+	return 0;
 }
 
 void SPI1_IRQHandler(void) {
@@ -182,9 +200,23 @@ void SPI1_IRQHandler(void) {
 //		}
 	}
 	if(LL_SPI_IsActiveFlag_RXNE(SPI1)) {
+		//Reset CS
+		GPIOWrite(GPIO_OUT_AMPA_CS, 1);
+
+		//Dummy read
 		uint16_t rx = LL_SPI_ReceiveData16(SPI1);
 
-		GPIOWrite(GPIO_OUT_AMPA_CS, 1);
+		//Get next TX ready
+		if(spi1TXBufferIndex < spi1TXBufferLength) {
+			//Set CS
+			GPIOWrite(GPIO_OUT_AMPA_CS, 0);
+
+			LL_SPI_TransmitData16(SPI1, spi1TXBuffer[spi1TXBufferIndex++]);
+		}
+		else {
+			spi1TXBufferLength = 0;
+			spi1TXBufferIndex = 0;
+		}
 	}
 	if(LL_SPI_IsActiveFlag_OVR(SPI1)) {
 
