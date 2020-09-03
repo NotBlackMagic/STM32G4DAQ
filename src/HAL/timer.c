@@ -194,7 +194,7 @@ void TIM6Init() {
 	//Configure the Timer
 //	LL_TIM_SetCounterMode(TIM6, LL_TIM_COUNTERMODE_UP);
 	LL_TIM_SetPrescaler(TIM6, 0);		//Leave timer at full clock speed
-	volatile uint16_t arr = __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM6), 2000000);		//Calculate ARR register value for clock to be 2MHz
+	volatile uint16_t arr = __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM6), 1000000);		//Calculate ARR register value for clock to be 1MHz
 	LL_TIM_SetAutoReload(TIM6, arr);	//Set ARR value
 	LL_TIM_DisableARRPreload(TIM6);
 	LL_TIM_SetTriggerOutput(TIM6, LL_TIM_TRGO_UPDATE);
@@ -221,7 +221,7 @@ void TIM7Init() {
 	//Configure the Timer
 //	LL_TIM_SetCounterMode(TIM7, LL_TIM_COUNTERMODE_UP);
 	LL_TIM_SetPrescaler(TIM7, 0);		//Leave timer at full clock speed
-	volatile uint16_t arr = __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM7), 2000000);		//Calculate ARR register value for clock to be 2MHz
+	volatile uint16_t arr = __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM7), 1000000);		//Calculate ARR register value for clock to be 1MHz
 	LL_TIM_SetAutoReload(TIM7, arr);	//Set ARR value
 	LL_TIM_DisableARRPreload(TIM7);
 	LL_TIM_SetTriggerOutput(TIM7, LL_TIM_TRGO_UPDATE);

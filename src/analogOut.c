@@ -24,6 +24,7 @@ void AnalogOutInit() {
 		analogOutBChannels[0].buffer[i] = 2048;
 		analogOutBChannels[1].buffer[i] = 2048;
 	}
+
 	analogOutAChannels[0].bufferLength = 1;
 	analogOutAChannels[1].bufferLength = 1;
 	analogOutBChannels[0].bufferLength = 1;

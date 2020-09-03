@@ -58,10 +58,6 @@ int main(void) {
 
 	//Start ADC Conversions
 
-	//Set DAC to 0V, "Idle" voltage
-	DAC4Write(1, 2048);
-	DAC4Write(2, 2048);
-
 	//------------------------------------------//
 
 	//Possible Init External peripheral interfaces
