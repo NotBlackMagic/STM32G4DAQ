@@ -82,6 +82,7 @@ void AnalogInInit();
 void AnalogInCalibration(uint8_t anBlock);
 void AnalogInConfig(uint8_t anBlock, AnalogInConfigStruct config);
 void AnalogInConfigChannel(uint8_t anBlock, uint8_t channel, AnalogInCHConfigStruct config);
+void AnalogInStopAll();
 uint16_t AnalogInGetData(uint8_t anBlock, uint8_t channel, uint8_t* data);
 void AnalogInHandler(uint8_t anBlock);
 

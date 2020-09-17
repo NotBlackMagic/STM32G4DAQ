@@ -19,6 +19,7 @@ uint8_t SPI2ReadWrite(uint8_t txByte);
 uint8_t SPI3ReadWrite(uint8_t txByte);
 
 uint8_t SPI1Write(uint16_t* data, uint8_t length);
+uint8_t SPI3Write(uint16_t* data, uint8_t length);
 
 #ifdef __cplusplus
 }

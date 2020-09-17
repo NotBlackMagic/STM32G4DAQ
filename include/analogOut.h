@@ -12,10 +12,13 @@
 #include "stm32g4xx_ll_gpio.h"
 
 #include "dac.h"
+#include "timer.h"
 #include "pinMaping.h"
 
-#define ANALOG_OUT_BLOCK_A					0x01
-#define ANALOG_OUT_BLOCK_B					0x02
+#define ANALOG_OUT_BLOCK_A						0x01
+#define ANALOG_OUT_BLOCK_B						0x02
+
+#define ANALOG_OUT_BUFFER_SIZE					128
 
 typedef enum {
 	Mode_None,
@@ -37,7 +40,7 @@ typedef struct {
 typedef struct {
 	uint8_t channel;
 	uint32_t frequency;
-	uint16_t buffer[512];
+	uint16_t buffer[ANALOG_OUT_BUFFER_SIZE];
 	uint16_t bufferLength;
 } AnalogOutCHStruct;
 

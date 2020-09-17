@@ -1,6 +1,6 @@
 #include "usb_vcp.h"
 
-#define USB_RX_BUFFER_LENGTH				512
+#define USB_RX_BUFFER_LENGTH				70
 #define USB_TX_BUFFER_LENGTH				512
 
 //USB Device Core handle declaration

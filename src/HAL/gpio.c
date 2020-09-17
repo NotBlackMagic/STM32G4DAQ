@@ -30,7 +30,7 @@ void GPIOInit() {
 
 	//Set Flexible GPIO Pins to Input
 	GPIOSetPinMode(GPIO_IO_GPIO0, GPIO_Mode_Output);
-	GPIOSetPinMode(GPIO_IO_GPIO1, GPIO_Mode_Input);
+	GPIOSetPinMode(GPIO_IO_GPIO1, GPIO_Mode_Output);
 	GPIOSetPinMode(GPIO_IO_GPIO2, GPIO_Mode_Input);
 	GPIOSetPinMode(GPIO_IO_GPIO3, GPIO_Mode_Input);
 	GPIOSetPinMode(GPIO_IO_GPIO4, GPIO_Mode_Input);
@@ -68,7 +68,7 @@ void GPIOInit() {
 //	GPIOWrite(GPIO_OUT_ADCA_CS, 1);
 	GPIOWrite(GPIO_OUT_AMPA_CS, 1);
 	GPIOWrite(GPIO_OUT_DACA_CS, 1);
-	GPIOWrite(GPIO_OUT_ADCAB_CS, 1);
+//	GPIOWrite(GPIO_OUT_ADCB_CS, 1);
 	GPIOWrite(GPIO_OUT_AMPB_CS, 1);
 	GPIOWrite(GPIO_OUT_DACB_CS, 1);
 	GPIOWrite(GPIO_OUT_STATUS_LED, 0);

@@ -4,7 +4,18 @@
 
 #define COMMAND_PAYLOAD_OFFSET						3
 
+/**
+  * @brief	This function handles received command packets
+  * @param	data: Received Data array
+  * @param	dataLength: Received Data array length
+  * @return	0-> Command Good, 1-> Command Failed/Wrong
+  */
 uint8_t CommandInterpreter(uint8_t* data, uint16_t dataLength) {
+	//DAQ Command Packet format
+	//[Opcode]  [Length]   [Payload]  [...]     [CRC]
+	//[uin8_t] [uint16_t] [uint8_t * Length] [uint16_t]
+
+	//Packet Field decoding
 	uint8_t opcode = data[0];
 	uint16_t payloadLength = (data[1] << 8) + data[2];
 	uint16_t crc = (data[3 + payloadLength] << 8) + data[4 + payloadLength];
@@ -17,6 +28,9 @@ uint8_t CommandInterpreter(uint8_t* data, uint16_t dataLength) {
 			break;
 		case OPCODE_DISCONNECT:
 			usbCOMPortOpen = 0x00;
+
+			//Clear Analog In sequencer, stop reading data from ADC
+			AnalogInStopAll();
 			break;
 		case OPCODE_SET_CURRENT_A:
 			ADA4254SetCurrent(ANALOG_IN_BLOCK_A, data[COMMAND_PAYLOAD_OFFSET], data[COMMAND_PAYLOAD_OFFSET+1]);
@@ -52,9 +66,14 @@ uint8_t CommandInterpreter(uint8_t* data, uint16_t dataLength) {
 			config.frequency = (data[COMMAND_PAYLOAD_OFFSET+1] << 16) + (data[COMMAND_PAYLOAD_OFFSET+2] << 8) + data[COMMAND_PAYLOAD_OFFSET+3];
 			config.bufferLength = (data[COMMAND_PAYLOAD_OFFSET+4] << 8) + data[COMMAND_PAYLOAD_OFFSET+5];
 
+			if(config.bufferLength > ANALOG_OUT_BUFFER_SIZE) {
+				//New DAC samples array is to long
+				return 1;
+			}
+
 			uint16_t i;
 			for(i = 0; i < config.bufferLength; i++) {
-				config.buffer[i] = (data[(COMMAND_PAYLOAD_OFFSET+6) + (i*2)] << 8) + data[(COMMAND_PAYLOAD_OFFSET+6) + (i*2 + 1)];
+				config.buffer[i] = (data[(COMMAND_PAYLOAD_OFFSET+6) + (i*2)] << 8) + data[(COMMAND_PAYLOAD_OFFSET+7) + (i*2)];
 			}
 
 			AnalogOutConfigChannel(ANALOG_OUT_BLOCK_A, config.channel, config);
@@ -67,9 +86,14 @@ uint8_t CommandInterpreter(uint8_t* data, uint16_t dataLength) {
 			config.frequency = (data[COMMAND_PAYLOAD_OFFSET+1] << 16) + (data[COMMAND_PAYLOAD_OFFSET+2] << 8) + data[COMMAND_PAYLOAD_OFFSET+3];
 			config.bufferLength = (data[COMMAND_PAYLOAD_OFFSET+4] << 8) + data[COMMAND_PAYLOAD_OFFSET+5];
 
+			if(config.bufferLength > ANALOG_OUT_BUFFER_SIZE) {
+				//New DAC samples array is to long
+				return 1;
+			}
+
 			uint16_t i;
 			for(i = 0; i < config.bufferLength; i++) {
-				config.buffer[i] = (data[(COMMAND_PAYLOAD_OFFSET+6) + (i*2)] << 8) + data[(COMMAND_PAYLOAD_OFFSET+6) + (i*2 + 1)];
+				config.buffer[i] = (data[(COMMAND_PAYLOAD_OFFSET+6) + (i*2)] << 8) + data[(COMMAND_PAYLOAD_OFFSET+7) + (i*2)];
 			}
 
 			AnalogOutConfigChannel(ANALOG_OUT_BLOCK_B, config.channel, config);

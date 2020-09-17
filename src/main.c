@@ -11,8 +11,11 @@
 
 #include "ada4254.h"
 #include "analogIn.h"
+#include "commandInterpreter.h"
 #include "opcodes.h"
 #include "pinMaping.h"
+
+#include "arm_math.h"
 
 int main(void) {
 	//Configure the system clock
@@ -36,6 +39,7 @@ int main(void) {
 
 	//Init DAC and DAC trigger Timer
 	TIM6Init();
+	TIM4Init();
 	DAC1Init();
 
 	//Start ADC Conversions
@@ -49,15 +53,18 @@ int main(void) {
 	SPI3Init();
 
 	//Init ADC and ADC trigger Timer
+	TIM3Init();
+	ADC2Init();
 
 	//Init DAC and DAC trigger Timer
 	TIM7Init();
+	TIM15Init();
 	DAC4Init();
 	OpAmp4Init();
 	OpAmp5Init();
 
 	//Start ADC Conversions
-
+	ADC2Start();
 	//------------------------------------------//
 
 	//Possible Init External peripheral interfaces
@@ -71,17 +78,28 @@ int main(void) {
 	AnalogInInit();
 	AnalogOutInit();
 
-	uint32_t timestamp = 0;
-
 	uint8_t isVCPConnected = 0;
 	uint8_t txUSBData[1024];
-	uint16_t txLength;
-	uint8_t rxUSBData[1024];
 	uint16_t rxLength;
+	uint16_t rxUSBIndex = 0;
+	uint8_t rxUSBData[1024];
 	while(1) {
 		//USB/AT Command Interpreter
-		if(USBVCPRead(rxUSBData, &rxLength) == 1) {
-			CommandInterpreter(rxUSBData, rxLength);
+		if(USBVCPRead(&rxUSBData[rxUSBIndex], &rxLength) == 1) {
+			if(rxLength == 64) {
+				//This is a partial packet, USB packets are read in 64 bytes packets
+				rxUSBIndex += rxLength;
+
+				if(rxLength > 900) {
+					//Buffer overflow
+					rxUSBIndex = 0;
+				}
+			}
+			else {
+				CommandInterpreter(rxUSBData, rxLength);
+
+				rxUSBIndex = 0;
+			}
 		}
 
 		//This Sets the LED1 to the Virtual COM Connection state, LED is ON if connected
@@ -98,6 +116,14 @@ int main(void) {
 
 		//Check if USB TX is ready for new data
 		if(USBVCPTXStatus() == 0x00) {
+			//DAQ Command Packet format
+			//[Opcode]  [Length]   [Payload]  [...]     [CRC]
+			//[uin8_t] [uint16_t] [uint8_t * Length] [uint16_t]
+
+			//DAQ Data Packet, Payload field:
+			//[Channel]          [Samples]
+			//[uint8_t] [uint8_t * 2 * (Length - 1)]
+
 			uint16_t txUSBDataIndex = 0;
 			uint8_t channel = 1;
 			for(channel = 1; channel < 9; channel++) {

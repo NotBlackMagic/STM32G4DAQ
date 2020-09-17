@@ -112,12 +112,16 @@ void AnalogOutConfigChannel(uint8_t anBlock, uint8_t channel, AnalogOutCHStruct 
 			LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_1);
 			LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_1, analogOutAChannels[0].bufferLength);
 			LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_1);
+
+			TIM6SetFreq(config.frequency);
 		}
 		else if(channel == 0x02) {
 			//Change DMA Settings, buffer length
 			LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_2);
 			LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_2, analogOutAChannels[1].bufferLength);
 			LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_2);
+
+			TIM4SetFreq(config.frequency);
 		}
 	}
 	else if(anBlock == ANALOG_OUT_BLOCK_B) {
@@ -128,12 +132,16 @@ void AnalogOutConfigChannel(uint8_t anBlock, uint8_t channel, AnalogOutCHStruct 
 			LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_3);
 			LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_3, analogOutBChannels[0].bufferLength);
 			LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_3);
+
+			TIM7SetFreq(config.frequency);
 		}
 		else if(channel == 0x02) {
 			//Change DMA Settings, buffer length
 			LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_4);
 			LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_4, analogOutBChannels[1].bufferLength);
 			LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_4);
+
+			TIM15SetFreq(config.frequency);
 		}
 	}
 }

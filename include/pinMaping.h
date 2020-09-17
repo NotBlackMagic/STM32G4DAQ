@@ -14,7 +14,7 @@ extern "C" {
 #define GPIO_OUT_ADCA_CS					22		//Output ADC A CS
 #define GPIO_OUT_AMPA_CS					23		//Output Amplifier A CS
 #define GPIO_OUT_DACA_CS					50		//Output DAC A CS
-#define GPIO_OUT_ADCAB_CS					38		//Output ADC B CS
+#define GPIO_OUT_ADCB_CS					38		//Output ADC B CS
 #define GPIO_OUT_AMPB_CS					15		//Output Amplifier B CS
 #define GPIO_OUT_DACB_CS					27		//Output DAC B CS
 #define GPIO_OUT_STATUS_LED					24		//Output Status LED
