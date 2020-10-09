@@ -20,6 +20,7 @@
 
 //Data to PC Opcodes
 #define OPCODE_TX_ANALOG_IN_A					0x81	//Send Analog In data
+#define OPCODE_TX_ANALOG_IN_B					0x82	//Send Analog In data
 
 #ifdef __cplusplus
 }
