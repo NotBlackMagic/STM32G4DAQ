@@ -345,6 +345,13 @@ SECTIONS
         *(.noinit.CCMRAM .noinit.CCMRAM.*)         
     } > CCMRAM
     
+     /* Special SRAM2 section */
+	.ram2 : 
+	{
+		*(.ram2)
+		*(.ram2*)
+	} > RAM2
+    
     .noinit (NOLOAD) : ALIGN(4)
     {
         _noinit = .;

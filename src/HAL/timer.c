@@ -62,7 +62,7 @@ void TIM3Init() {
 	//Configure the Timer
 //	LL_TIM_SetCounterMode(TIM3, LL_TIM_COUNTERMODE_UP);
 	LL_TIM_SetPrescaler(TIM3, 0);		//Leave timer at full clock speed
-	LL_TIM_SetAutoReload(TIM3, 1);		//Set output clock to frequency
+	LL_TIM_SetAutoReload(TIM3, 2);		//Set output clock
 	LL_TIM_SetClockDivision(TIM3, LL_TIM_CLOCKDIVISION_DIV1);
 	LL_TIM_SetRepetitionCounter(TIM3, 0);
 	LL_TIM_EnableARRPreload(TIM3);
@@ -178,7 +178,7 @@ void TIM8Init() {
 	//Configure the Timer
 //	LL_TIM_SetCounterMode(TIM8, LL_TIM_COUNTERMODE_UP);
 	LL_TIM_SetPrescaler(TIM8, 0);		//Leave timer at full clock speed
-	LL_TIM_SetAutoReload(TIM8, 1);		//Set output clock to frequency
+	LL_TIM_SetAutoReload(TIM8, 2);		//Set output clock
 	LL_TIM_SetClockDivision(TIM8, LL_TIM_CLOCKDIVISION_DIV1);
 	LL_TIM_SetRepetitionCounter(TIM8, 0);
 	LL_TIM_EnableARRPreload(TIM8);

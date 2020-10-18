@@ -1,6 +1,6 @@
 #include "usb_vcp.h"
 
-#define USB_RX_BUFFER_LENGTH				70
+#define USB_RX_BUFFER_LENGTH				512
 #define USB_TX_BUFFER_LENGTH				512
 
 //USB Device Core handle declaration
@@ -89,6 +89,9 @@ uint8_t USBVCPRead(uint8_t* data, uint16_t* length) {
 		}
 
 		*length = usbRXBufferLength;
+
+		//Clear USB Buffer status variables
+		usbRXBufferLength = 0;
 		usbRXBufferFull = 0;
 
 		return 1;
@@ -258,11 +261,23 @@ static int8_t USBVCPControl(uint8_t cmd, uint8_t* pbuf, uint16_t length) {
 }
 
 static int8_t USBVCPOnReceive(uint8_t* Buf, uint32_t *Len) {
-	usbRXBufferLength =  *Len;
-	usbRXBufferFull = 1;
+	if(*Len == 64) {
+		//This is a partial packet, USB packets are max 64 bytes
+		usbRXBufferLength += *Len;
 
-	//Re-set the USB RX Buffer to be ready for the next reception
-	USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &Buf[0]);
+		//Set the USB RX Buffer, increment buffer address location, not complete packet
+		USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &usbRXBuffer[usbRXBufferLength]);
+	}
+	else {
+		//Full packet received
+		usbRXBufferLength += *Len;
+
+		usbRXBufferFull = 1;
+
+		//Re-set the USB RX Buffer to be ready for the next reception
+		USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &usbRXBuffer[0]);
+	}
+
 	USBD_CDC_ReceivePacket(&hUsbDeviceFS);
 	return (USBD_OK);
 }

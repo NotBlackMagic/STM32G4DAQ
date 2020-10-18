@@ -273,6 +273,12 @@ void AnalogInHandler(uint8_t anBlock) {
 	if(anBlock == ANALOG_IN_BLOCK_A) {
 		GPIOWrite(GPIO_IO_GPIO0, 1);
 
+		//Check for ADC Overflow error
+		if(LL_ADC_IsActiveFlag_OVR(ADC1) == 0x01) {
+			//ADC1 Overflow error
+			LL_ADC_ClearFlag_OVR(ADC1);
+		}
+
 		//Read ADC to temp variable and get respective channel number
 		uint16_t value = LL_ADC_REG_ReadConversionData32(ADC1);
 		uint8_t channel = analogInACHSequencer[analogInAChSeqIndex];
@@ -332,6 +338,12 @@ void AnalogInHandler(uint8_t anBlock) {
 	}
 	else if(anBlock == ANALOG_IN_BLOCK_B) {
 		GPIOWrite(GPIO_IO_GPIO1, 1);
+
+		//Check for ADC Overflow error
+		if(LL_ADC_IsActiveFlag_OVR(ADC2) == 0x01) {
+			//ADC1 Overflow error
+			LL_ADC_ClearFlag_OVR(ADC2);
+		}
 
 		//Read ADC to temp variable and get respective channel number
 		uint16_t value = LL_ADC_REG_ReadConversionData32(ADC2);

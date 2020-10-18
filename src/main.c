@@ -15,7 +15,7 @@
 #include "opcodes.h"
 #include "pinMaping.h"
 
-#include "arm_math.h"
+//#include "arm_math.h"
 
 int main(void) {
 	//Configure the system clock
@@ -81,25 +81,11 @@ int main(void) {
 	uint8_t isVCPConnected = 0;
 	uint8_t txUSBData[1024];
 	uint16_t rxLength;
-	uint16_t rxUSBIndex = 0;
 	uint8_t rxUSBData[1024];
 	while(1) {
 		//USB/AT Command Interpreter
-		if(USBVCPRead(&rxUSBData[rxUSBIndex], &rxLength) == 1) {
-			if(rxLength == 64) {
-				//This is a partial packet, USB packets are read in 64 bytes packets
-				rxUSBIndex += rxLength;
-
-				if(rxLength > 900) {
-					//Buffer overflow
-					rxUSBIndex = 0;
-				}
-			}
-			else {
-				CommandInterpreter(rxUSBData, rxLength);
-
-				rxUSBIndex = 0;
-			}
+		if(USBVCPRead(&rxUSBData[0], &rxLength) == 1) {
+			CommandInterpreter(rxUSBData, rxLength);
 		}
 
 		//This Sets the LED1 to the Virtual COM Connection state, LED is ON if connected

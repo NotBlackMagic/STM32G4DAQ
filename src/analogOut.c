@@ -1,7 +1,7 @@
 #include "analogOut.h"
 
-AnalogOutCHStruct analogOutAChannels[2];
-AnalogOutCHStruct analogOutBChannels[2];
+__attribute__((section(".ram2"))) AnalogOutCHStruct analogOutAChannels[2];
+__attribute__((section(".ram2"))) AnalogOutCHStruct analogOutBChannels[2];
 
 /**
   * @brief	This function initializes the Analog OUT Channel:
@@ -18,7 +18,7 @@ void AnalogOutInit() {
 	//Init DAC output buffers
 	//{2048, 2680, 3252, 3705, 3996, 4095, 3996, 3705, 3252, 2680, 2048, 1415, 844, 391, 100, 0, 100, 391, 844, 1415}
 	uint16_t i;
-	for(i = 0; i < 512; i++) {
+	for(i = 0; i < ANALOG_OUT_BUFFER_SIZE; i++) {
 		analogOutAChannels[0].buffer[i] = 2048;
 		analogOutAChannels[1].buffer[i] = 2048;
 		analogOutBChannels[0].buffer[i] = 2048;
