@@ -47,6 +47,15 @@ uint8_t CommandInterpreter(uint8_t* data, uint16_t dataLength) {
 			AnalogInConfig(ANALOG_IN_BLOCK_A, config);
 			break;
 		}
+		case OPCODE_SET_ANALOG_IN_B: {
+			AnalogInConfigStruct config;
+
+			config.rate = data[COMMAND_PAYLOAD_OFFSET+0];
+			config.scale = data[COMMAND_PAYLOAD_OFFSET+1];
+
+			AnalogInConfig(ANALOG_IN_BLOCK_B, config);
+			break;
+		}
 		case OPCODE_SET_ANALOG_IN_A_CH: {
 			AnalogInCHConfigStruct config;
 
@@ -57,6 +66,18 @@ uint8_t CommandInterpreter(uint8_t* data, uint16_t dataLength) {
 			config.gain = data[COMMAND_PAYLOAD_OFFSET+4];
 
 			AnalogInConfigChannel(ANALOG_IN_BLOCK_A, channel, config);
+			break;
+		}
+		case OPCODE_SET_ANALOG_IN_B_CH: {
+			AnalogInCHConfigStruct config;
+
+			uint8_t channel = data[COMMAND_PAYLOAD_OFFSET+0];
+			config.mode = data[COMMAND_PAYLOAD_OFFSET+1];
+			config.division = data[COMMAND_PAYLOAD_OFFSET+2];
+			config.resolution = data[COMMAND_PAYLOAD_OFFSET+3];
+			config.gain = data[COMMAND_PAYLOAD_OFFSET+4];
+
+			AnalogInConfigChannel(ANALOG_IN_BLOCK_B, channel, config);
 			break;
 		}
 		case OPCODE_SET_ANALOG_OUT_A_CH: {

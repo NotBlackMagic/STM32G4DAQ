@@ -12,11 +12,13 @@
 
 //Config Opcodes
 #define OPCODE_SET_CURRENT_A					0x11	//Configure Current output A
-#define OPCODE_SET_CURRENT_B					0x12	//Configure Current output A
+#define OPCODE_SET_CURRENT_B					0x12	//Configure Current output B
 #define OPCODE_SET_ANALOG_IN_A					0x13	//Configure Analog In Block A
-#define OPCODE_SET_ANALOG_IN_A_CH				0x14	//Configure Analog In Block A Channel
-#define OPCODE_SET_ANALOG_OUT_A_CH				0x15	//Configure Analog Out Block A Channel
-#define OPCODE_SET_ANALOG_OUT_B_CH				0x16	//Configure Analog Out Block B Channel
+#define OPCODE_SET_ANALOG_IN_B					0x14	//Configure Analog In Block B
+#define OPCODE_SET_ANALOG_IN_A_CH				0x15	//Configure Analog In Block A Channel
+#define OPCODE_SET_ANALOG_IN_B_CH				0x16	//Configure Analog In Block B Channel
+#define OPCODE_SET_ANALOG_OUT_A_CH				0x17	//Configure Analog Out Block A Channel
+#define OPCODE_SET_ANALOG_OUT_B_CH				0x18	//Configure Analog Out Block B Channel
 
 //Data to PC Opcodes
 #define OPCODE_TX_ANALOG_IN_A					0x81	//Send Analog In data

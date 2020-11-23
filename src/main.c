@@ -113,9 +113,26 @@ int main(void) {
 			uint16_t txUSBDataIndex = 0;
 			uint8_t channel = 1;
 			for(channel = 1; channel < 9; channel++) {
-				uint16_t dataLength = AnalogInGetData(1, channel, &txUSBData[txUSBDataIndex + 4]);
+				uint16_t dataLength = AnalogInGetData(ANALOG_IN_BLOCK_A, channel, &txUSBData[txUSBDataIndex + 4]);
 				if(dataLength != 0x00) {
 					txUSBData[txUSBDataIndex++] = OPCODE_TX_ANALOG_IN_A;	//Set Opcode
+
+					dataLength += 1;	//Add Channel indicator to payload length
+					txUSBData[txUSBDataIndex++] = (dataLength >> 8);		//Set Packet Length
+					txUSBData[txUSBDataIndex++] = (dataLength);				//Set Packet Length
+					txUSBData[txUSBDataIndex++] = channel;					//Set Analog In Channel
+
+					//Add payload
+					txUSBDataIndex += dataLength;
+
+					//Add CRC
+					txUSBData[txUSBDataIndex++] = 0x00;
+					txUSBData[txUSBDataIndex++] = 0x00;
+				}
+
+				dataLength = AnalogInGetData(ANALOG_IN_BLOCK_B, channel, &txUSBData[txUSBDataIndex + 4]);
+				if(dataLength != 0x00) {
+					txUSBData[txUSBDataIndex++] = OPCODE_TX_ANALOG_IN_B;	//Set Opcode
 
 					dataLength += 1;	//Add Channel indicator to payload length
 					txUSBData[txUSBDataIndex++] = (dataLength >> 8);		//Set Packet Length
